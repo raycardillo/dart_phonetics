@@ -1,0 +1,15 @@
+name: dart_phonetics
+description: A collection of phonetic algorithms for Dart.
+version: 0.1.0-dev.2
+homepage: https://github.com/raycardillo/dart_phonetics
+repository: https://github.com/raycardillo/dart_phonetics
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  charcode: ^1.1.2
+
+dev_dependencies:
+  test: ^1.9.4
+  pedantic: ^1.8.0+1
