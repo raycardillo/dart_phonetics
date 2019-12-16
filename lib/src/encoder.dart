@@ -16,7 +16,8 @@
  *
  */
 
-/// Phonetic encoder exceptions that are thrown when there are problems phonetically encoding an input string.
+/// Phonetic encoder exceptions that are thrown when there are problems
+/// phonetically encoding an input string.
 class PhoneticEncoderException implements Exception {
   /// The input that was being processed when the exception occurred.
   /// This should only be `null` if the input being encoded was `null`.
@@ -25,7 +26,7 @@ class PhoneticEncoderException implements Exception {
   /// A message describing the problem that was encountered.
   final String message;
 
-  /// Optionally indicates another exception that was the root cause of this exception.
+  /// Optionally indicates another exception that was the root cause.
   final Exception cause;
 
   /// Creates a new PhoneticEncoderException with an optional root [cause].
@@ -42,7 +43,23 @@ class PhoneticEncoderException implements Exception {
 }
 
 /// The common interface for all phonetic encoders.
+class PhoneticEncoding {
+  /// The primary phonetic encoding.
+  final String primary;
+
+  /// An alternative phonetic encoding for algorithms that support this.
+  final String alternate;
+
+  PhoneticEncoding(this.primary, [this.alternate]);
+
+  @override
+  String toString() {
+    return 'PhoneticEncoding{primary=$primary, alternate=$alternate}';
+  }
+}
+
+/// The common interface for all phonetic encoders.
 abstract class PhoneticEncoder {
-  /// Returns a phonetically encoded String representing the [input] String.
-  String encode(String input);
+  /// Returns a [PhoneticEncoding] for the [input] String.
+  PhoneticEncoding encode(String input);
 }

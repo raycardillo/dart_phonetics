@@ -26,11 +26,13 @@ void main() {
   group('Constructor Tests', () {
     test('test basic constructors', () {
       expectEncoding(Soundex(), 'Williams', 'W452');
-      expectEncoding(Soundex.usEnglishEncoder, 'Williams', 'W452');
-      expectEncoding(Soundex.usEnglishSimplifiedEncoder, 'Williams', 'W452');
-      expectEncoding(Soundex.usEnglishGenealogyEncoder, 'Williams', 'W452');
-      expectEncoding(Soundex.fromMapping(Soundex.usEnglishMapping), 'Williams', 'W452');
-      expectEncoding(Soundex.fromMapping(Soundex.usEnglishGenealogyMapping), 'Williams', 'W452');
+      expectEncoding(Soundex.americanEncoder, 'Williams', 'W452');
+      expectEncoding(Soundex.americanEncoder, 'Williams', 'W452');
+      expectEncoding(Soundex.americanEncoder, 'Williams', 'W452');
+      expectEncoding(
+          Soundex.fromMapping(Soundex.americanMapping), 'Williams', 'W452');
+      expectEncoding(Soundex.fromMapping(Soundex.americanMapping),
+          'Williams', 'W452');
     });
   });
 
@@ -53,7 +55,7 @@ void main() {
     test('test irregular characters', () {
       final soundex = Soundex();
 
-      expectEncoding(soundex, '#@', '');
+      expectEncoding(soundex, '#@', null);
       expectEncoding(soundex, '<test&ing>', 'T235');
       expectEncoding(soundex, '\0#tes@ting!', 'T235');
       expectEncoding(soundex, ' \t\n\r Washington \t\n\r ', 'W252');
@@ -106,8 +108,11 @@ void main() {
       expectEncodings(soundex, inputs, 'B650');
     });
 
-    test('test special encoding cases', () {
+    test('test normal encoding of special cases', () {
       final soundex = Soundex();
+
+      // in the standard mapping 'Lippmann' is 'L155' (see genealogy for alt)
+      expectEncoding(soundex, 'Lippmann', 'L155');
 
       // Examples from http://www.bradandkathy.com/genealogy/overviewofsoundex.html
       expectEncoding(soundex, 'Allricht', 'A462');
@@ -134,8 +139,6 @@ void main() {
       expectEncoding(soundex, 'Pfister', 'P236');
       expectEncoding(soundex, 'Jackson', 'J250');
       expectEncoding(soundex, 'Tymczak', 'T522');
-
-      // For VanDeusen: D-250 (D, 2 for the S, 5 for the N, 0 added) is also possible.
       expectEncoding(soundex, 'VanDeusen', 'V532');
 
       // Examples from: http://www.myatt.demon.co.uk/sxalg.htm
@@ -151,18 +154,32 @@ void main() {
       // https://issues.apache.org/jira/browse/CODEC-54 https://issues.apache.org/jira/browse/CODEC-56
       expectEncoding(soundex, 'Williams', 'W452');
 
-      // Tests example from http://en.wikipedia.org/wiki/Soundex#American_Soundex as of 2015-03-22.
+      // http://en.wikipedia.org/wiki/Soundex#American_Soundex as of December 2019.
       expectEncoding(soundex, 'Robert', 'R163');
       expectEncoding(soundex, 'Rupert', 'R163');
       expectEncoding(soundex, 'Ashcraft', 'A261');
       expectEncoding(soundex, 'Ashcroft', 'A261');
       expectEncoding(soundex, 'Tymczak', 'T522');
       expectEncoding(soundex, 'Pfister', 'P236');
+
+      // and a few more for good measure
+      expectEncoding(soundex, 'Ashclown', 'A245');
+      expectEncoding(soundex, 'Shishko', 'S200');
+      expectEncoding(soundex, 'Qashqar', 'Q260');
     });
 
     test('test ignore apostrophes', () {
       final soundex = Soundex();
-      final inputs = ['OBrien', "'OBrien", "O'Brien", "OB'rien", "OBr'ien", "OBri'en", "OBrie'n", "OBrien'"];
+      final inputs = [
+        'OBrien',
+        "'OBrien",
+        "O'Brien",
+        "OB'rien",
+        "OBr'ien",
+        "OBri'en",
+        "OBrie'n",
+        "OBrien'"
+      ];
 
       expectEncodings(soundex, inputs, 'O165');
     });
@@ -190,7 +207,7 @@ void main() {
 
       // Consonants from the same code group separated by W or H are treated as one.
       // From http://www.archives.gov/research_room/genealogy/census/soundex.html:
-      // Ashcraft is coded A-261 (A, 2 for the S, C ignored, 6 for the R, 1 for the F). It is not coded A-226.
+      // Ashcraft is coded A261 (A, 2 for the S, C ignored, 6 for the R, 1 for the F).
       expectEncoding(soundex, 'Ashcraft', 'A261');
       expectEncoding(soundex, 'Ashcroft', 'A261');
       expectEncoding(soundex, 'yehudit', 'Y330');
@@ -232,7 +249,14 @@ void main() {
 
       expectEncoding(soundex, 'Smith', 'S530');
       expectEncoding(soundex, 'Smythe', 'S530');
-      final inputs = ['Erickson', 'Erickson', 'Erikson', 'Ericson', 'Ericksen', 'Ericsen'];
+      final inputs = [
+        'Erickson',
+        'Erickson',
+        'Erikson',
+        'Ericson',
+        'Ericksen',
+        'Ericsen'
+      ];
       expectEncodings(soundex, inputs, 'E625');
 
       expectEncoding(soundex, 'Ann', 'A500');
@@ -253,34 +277,175 @@ void main() {
       expectEncoding(soundex, 'e', 'E000');
 
       // Special characters are not mapped by the US_ENGLISH mapping.
-      expectEncoding(soundex, String.fromCharCode($Eacute), '');
-      expectEncoding(soundex, String.fromCharCode($eacute), '');
+      expectEncoding(soundex, String.fromCharCode($Eacute), null);
+      expectEncoding(soundex, String.fromCharCode($eacute), null);
 
       // Simple 'o' should work fine
       expectEncoding(soundex, 'o', 'O000');
 
       // Special characters are not mapped by the US_ENGLISH mapping.
-      expectEncoding(soundex, String.fromCharCode($Ouml), '');
-      expectEncoding(soundex, String.fromCharCode($ouml), '');
+      expectEncoding(soundex, String.fromCharCode($Ouml), null);
+      expectEncoding(soundex, String.fromCharCode($ouml), null);
     });
 
-    test('test genealogy mapping', () {
-      final soundex = Soundex.usEnglishGenealogyEncoder;
+    test('test ntz examples', () {
+      final soundex = Soundex();
+
+      // testing examples from:
+      // http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
+
+      expectEncoding(soundex, 'Fusedale', 'F234');
+
+      var inputs;
+
+      inputs = [
+        'Genthner',
+        'Gentner',
+        'Gianettini',
+        'Gunton',
+      ];
+      expectEncodings(soundex, inputs, 'G535');
+
+      inputs = [
+        'Garlee',
+        'Garley',
+        'Garwell',
+        'Gerrell',
+        'Gerrill',
+        'Giral',
+        'Gorelli',
+        'Gorioli',
+        'Gourlay',
+        'Gourley',
+        'Gourlie',
+        'Graal',
+        'Grahl',
+        'Grayley',
+        'Grealey',
+        'Greally',
+        'Grealy',
+        'Grioli',
+        'Groll',
+        'Grolle',
+        'Guerola',
+        'Gurley',
+      ];
+      expectEncodings(soundex, inputs, 'G640');
+
+      inputs = [
+        'Hadcroft',
+        'Hadgraft',
+        'Hatchard',
+        'Hatcher',
+        'Hatzar',
+        'Hedger',
+        'Hitscher',
+        'Hodcroft',
+        'Hutchcraft',
+      ];
+      expectEncodings(soundex, inputs, 'H326');
+
+      inputs = [
+        'Parade',
+        'Pardew',
+        'Pardey',
+        'Pardi',
+        'Pardie',
+        'Pardoe',
+        'Pardue',
+        'Pardy',
+        'Parradye',
+        'Parratt',
+        'Parrett',
+        'Parrot',
+        'Parrott',
+        'Pearde',
+        'Peart',
+        'Peaurt',
+        'Peert',
+        'Perdue',
+        'Peret',
+        'Perett',
+        'Perot',
+        'Perott',
+        'Perotti',
+        'Perrat',
+        'Perrett',
+        'Perritt',
+        'Perrot',
+        'Perrott',
+        'Pert',
+        'Perutto',
+        'Pirdue',
+        'Pirdy',
+        'Pirot',
+        'Pirouet',
+        'Pirt',
+        'Porrett',
+        'Porritt',
+        'Port',
+        'Porte',
+        'Prati',
+        'Prate',
+        'Pratt',
+        'Pratte',
+        'Pratty',
+        'Preddy',
+        'Preedy',
+        'Preto',
+        'Pretti',
+        'Pretty',
+        'Prewett',
+        'Priddey',
+        'Priddie',
+        'Priddy',
+        'Pride',
+        'Pridie',
+        'Pritty',
+        'Prott',
+        'Proud',
+        'Prout',
+        'Pryde',
+        'Prydie',
+        'Purdey',
+        'Purdie',
+        'Purdy',
+      ];
+      expectEncodings(soundex, inputs, 'P630');
+    });
+
+    test('test genealogy encoder', () {
+      final soundex = Soundex.genealogyEncoder;
 
       // examples and algorithm rules from:  http://www.genealogy.com/articles/research/00000060.html
+      expectEncoding(soundex, 'Albright', 'A416');
+      expectEncoding(soundex, 'Greenbaum', 'G651');
+      expectEncoding(soundex, 'Del Principe', 'D416');
       expectEncoding(soundex, 'Heggenburger', 'H251');
       expectEncoding(soundex, 'Blackman', 'B425');
       expectEncoding(soundex, 'Schmidt', 'S530');
       expectEncoding(soundex, 'Lippmann', 'L150');
-      expectEncoding(soundex, 'Dodds', 'D200'); // 'o' is not a separator here - it is silent
-      expectEncoding(soundex, 'Dhdds', 'D200'); // 'h' is silent
-      expectEncoding(soundex, 'Dwdds', 'D200'); // 'w' is silent
+
+      // 'o' is not a separator here - it is silent
+      expectEncoding(soundex, 'Dodds', 'D200');
+
+      // 'h' is silent
+      expectEncoding(soundex, 'Dhdds', 'D200');
+
+      // 'w' is silent
+      expectEncoding(soundex, 'Dwdds', 'D200');
     });
 
-    test('test simplified mapping', () {
-      final soundex = Soundex.usEnglishSimplifiedEncoder;
+    test('test special encodings', () {
+      final soundex = Soundex.specialEncoder;
 
-      // examples and algorithm rules from:  http://west-penwith.org.uk/misc/soundex.htm
+      expectEncoding(soundex, 'Ashcraft', 'A226');
+      expectEncoding(soundex, 'Ashcroft', 'A226');
+      expectEncoding(soundex, 'Ashclown', 'A224');
+      expectEncoding(soundex, 'Shishko', 'S220');
+      expectEncoding(soundex, 'Qashqar', 'Q226');
+
+      // examples from references where H and W are not ignored
       expectEncoding(soundex, 'WILLIAMS', 'W452');
       expectEncoding(soundex, 'BARAGWANATH', 'B625');
       expectEncoding(soundex, 'DONNELL', 'D540');
@@ -290,26 +455,28 @@ void main() {
       expectEncoding(soundex, 'Dwdds', 'D320'); // w is a separator
       expectEncoding(soundex, 'Dhdds', 'D320'); // h is a separator
     });
+  });
 
-    test('test similarity measure', () {
+  group('Difference Tests', () {
+    test('test standard differences', () {
       final soundex = Soundex();
 
       // Edge cases
-      expect(0, soundex.difference(null, null));
-      expect(0, soundex.difference('', ''));
-      expect(0, soundex.difference(' ', ' '));
+      expect(0, PhoneticUtils.differences(soundex, null, null)[0]);
+      expect(0, PhoneticUtils.differences(soundex, '', '')[0]);
+      expect(0, PhoneticUtils.differences(soundex, ' ', ' ')[0]);
 
       // Normal cases
-      expect(4, soundex.difference('Smith', 'Smythe'));
-      expect(2, soundex.difference('Ann', 'Andrew'));
-      expect(1, soundex.difference('Margaret', 'Andrew'));
-      expect(0, soundex.difference('Janet', 'Margaret'));
+      expect(4, PhoneticUtils.differences(soundex, 'Smith', 'Smythe')[0]);
+      expect(2, PhoneticUtils.differences(soundex, 'Ann', 'Andrew')[0]);
+      expect(1, PhoneticUtils.differences(soundex, 'Margaret', 'Andrew')[0]);
+      expect(0, PhoneticUtils.differences(soundex, 'Janet', 'Margaret')[0]);
 
       // Special cases
-      expect(4, soundex.difference('Green', 'Greene'));
-      expect(0, soundex.difference('Blotchet-Halls', 'Greene'));
-      expect(4, soundex.difference('Smithers', 'Smythers'));
-      expect(2, soundex.difference('Anothers', 'Brothers'));
+      expect(4, PhoneticUtils.differences(soundex, 'Green', 'Greene')[0]);
+      expect(0, PhoneticUtils.differences(soundex, 'Blotchet-Halls', 'Greene')[0]);
+      expect(4, PhoneticUtils.differences(soundex, 'Smithers', 'Smythers')[0]);
+      expect(2, PhoneticUtils.differences(soundex, 'Anothers', 'Brothers')[0]);
     });
   });
 }
