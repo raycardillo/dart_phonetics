@@ -55,11 +55,15 @@ class PhoneticUtils {
   /// Returns a cleaned version of the string.
   static String clean(final String str) {
     if (str == null || str.isEmpty) {
-      return str;
+      return null;
     }
 
     var codeUnits = str.codeUnits;
     var cleanedCodeUnits = codeUnits.where((codeUnit) => isLetter(codeUnit));
+
+    if (cleanedCodeUnits.isEmpty) {
+      return null;
+    }
 
     if (codeUnits.length == cleanedCodeUnits.length) {
       // no need to do the extra create
@@ -70,32 +74,34 @@ class PhoneticUtils {
     return String.fromCharCodes(cleanedCodeUnits).toUpperCase();
   }
 
-  /// Encodes [s1] and [s2] using [encoder] and then returns the number of characters that are the same.
+  /// Encodes [s1] and [s2] using [encoder] and then returns an array
+  /// containing the [differenceEncoded] similarity valude for the
+  /// [PhoneticEncoding.primary] and [PhoneticEncoding.alternate] encodings.
+  ///
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
-  ///
-  /// - For [Soundex], this return value ranges from `0` through `4`, where `0` indicates
-  /// little or no similarity, and `4` indicates strong similarity or identical values.
-  /// - For [RefinedSoundex], the return value can be greater than `4`.
-  static int difference(
+  static List<int> differences(
       final PhoneticEncoder encoder, final String s1, final String s2) {
-    return differenceEncoded(encoder.encode(s1), encoder.encode(s2));
+    final encoding1 = encoder.encode(s1);
+    final encoding2 = encoder.encode(s2);
+
+    return [
+      differenceEncoded(encoding1?.primary, encoding2?.primary),
+      differenceEncoded(encoding1?.alternate, encoding2?.alternate),
+    ];
   }
 
-  /// Returns the number of characters that are the same in [es1] and [es2].
+  /// Returns the number of characters that are the same in [e1] and [e2].
+  ///
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
-  ///
-  /// - For [Soundex], this return value ranges from `0` through `4`, where `0` indicates
-  /// little or no similarity, and `4` indicates strong similarity or identical values.
-  /// - For [RefinedSoundex], the return value can be greater than `4`.
-  static int differenceEncoded(final String es1, final String es2) {
-    if (es1 == null || es1.isEmpty || es2 == null || es2.isEmpty) {
+  static int differenceEncoded(final String e1, final String e2) {
+    if (e1 == null || e1.isEmpty || e2 == null || e2.isEmpty) {
       return 0;
     }
 
-    var iterator1 = es1.codeUnits.iterator;
-    var iterator2 = es2.codeUnits.iterator;
+    var iterator1 = e1.codeUnits.iterator;
+    var iterator2 = e2.codeUnits.iterator;
 
     var diff = 0;
     while (iterator1.moveNext() && iterator2.moveNext()) {

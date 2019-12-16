@@ -19,11 +19,13 @@
 import 'package:dart_phonetics/dart_phonetics.dart';
 import 'package:test/test.dart';
 
+import 'test_utils.dart';
+
 void main() {
   group('Utility Smoke Tests', () {
     test('null behavior', () {
       expect(PhoneticUtils.clean(null), null);
-      expect(PhoneticUtils.clean(''), '');
+      expect(PhoneticUtils.clean(''), null);
       expect(PhoneticUtils.differenceEncoded(null, ''), 0);
       expect(PhoneticUtils.differenceEncoded('', null), 0);
     });
@@ -31,17 +33,17 @@ void main() {
 
   group('Encoder Smoke Tests', () {
     test('smoke test - Soundex', () {
-      final soundex = Soundex.usEnglishEncoder;
-      expect(soundex.encode('Raymond'), 'R553');
-      expect(soundex.encode('Cardillo'), 'C634');
-      expect(soundex.encode('Who! What?'), 'W300');
+      final soundex = Soundex.americanEncoder;
+      expectEncoding(soundex, 'Raymond', 'R553');
+      expectEncoding(soundex, 'Cardillo', 'C634');
+      expectEncoding(soundex, 'Who! What?', 'W300');
     });
 
     test('smoke test - Refined Soundex', () {
-      final soundex = Soundex.usEnglishEncoder;
-      expect(soundex.encode('Raymond'), 'R553');
-      expect(soundex.encode('Cardillo'), 'C634');
-      expect(soundex.encode('Who! What?'), 'W300');
+      final soundex = Soundex.americanEncoder;
+      expectEncoding(soundex, 'Raymond', 'R553');
+      expectEncoding(soundex, 'Cardillo', 'C634');
+      expectEncoding(soundex, 'Who! What?', 'W300');
     });
   });
 }

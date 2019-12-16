@@ -26,8 +26,9 @@ void main() {
   group('Constructor Tests', () {
     test('test basic constructors', () {
       expectEncoding(RefinedSoundex(), 'Williams', 'W07083');
-      expectEncoding(RefinedSoundex.usEnglishEncoder, 'Williams', 'W07083');
-      expectEncoding(RefinedSoundex.fromMapping(RefinedSoundex.usEnglishMapping), 'Williams', 'W07083');
+      expectEncoding(RefinedSoundex.defaultEncoder, 'Williams', 'W07083');
+      expectEncoding(RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping),
+          'Williams', 'W07083');
     });
   });
 
@@ -51,7 +52,7 @@ void main() {
       final soundex = RefinedSoundex();
 
       // test some strings with irregular characters
-      expectEncoding(soundex, '#@', '');
+      expectEncoding(soundex, '#@', null);
       expectEncoding(soundex, '<test&ing>', 'T6036084');
       expectEncoding(soundex, '\0#tes@ting!', 'T6036084');
       expectEncoding(soundex, ' \t\n\r Washington \t\n\r ', 'W03084608');
@@ -59,7 +60,16 @@ void main() {
 
     test('test ignore apostrophes', () {
       final soundex = RefinedSoundex();
-      final inputs = ['OBrien', "'OBrien", "O'Brien", "OB'rien", "OBr'ien", "OBri'en", "OBrie'n", "OBrien'"];
+      final inputs = [
+        'OBrien',
+        "'OBrien",
+        "O'Brien",
+        "OB'rien",
+        "OBr'ien",
+        "OBri'en",
+        "OBrie'n",
+        "OBrien'"
+      ];
 
       expectEncodings(soundex, inputs, 'O01908');
     });
@@ -71,36 +81,103 @@ void main() {
       expectEncoding(soundex, 'e', 'E0');
 
       // Special characters are not mapped by the US_ENGLISH mapping.
-      expectEncoding(soundex, String.fromCharCode($Eacute), '');
-      expectEncoding(soundex, String.fromCharCode($eacute), '');
+      expectEncoding(soundex, String.fromCharCode($Eacute), null);
+      expectEncoding(soundex, String.fromCharCode($eacute), null);
 
       // Simple 'o' should work fine
       expectEncoding(soundex, 'o', 'O0');
 
       // Special characters are not mapped by the US_ENGLISH mapping.
-      expectEncoding(soundex, String.fromCharCode($Ouml), '');
-      expectEncoding(soundex, String.fromCharCode($ouml), '');
+      expectEncoding(soundex, String.fromCharCode($Ouml), null);
+      expectEncoding(soundex, String.fromCharCode($ouml), null);
+    });
+
+    test('test ntz examples', () {
+      final soundex = RefinedSoundex();
+
+      // testing examples from:
+      // http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
+
+      var inputs;
+
+      inputs = [
+        'Braz',
+        'Broz',
+      ];
+      expectEncodings(soundex, inputs, 'B1905');
+
+      inputs = [
+        'Caren',
+        'Caron',
+        'Carren',
+        'Charon',
+        'Corain',
+        'Coram',
+        'Corran',
+        'Corrin',
+        'Corwin',
+        'Curran',
+        'Curreen',
+        'Currin',
+        'Currom',
+        'Currum',
+        'Curwen',
+      ];
+      expectEncodings(soundex, inputs, 'C30908');
+
+      inputs = [
+        'Hairs',
+        'Hark',
+        'Hars',
+        'Hayers',
+        'Heers',
+        'Hiers',
+      ];
+      expectEncodings(soundex, inputs, 'H093');
+
+      inputs = [
+        'Lambard',
+        'Lambart',
+        'Lambert',
+        'Lambird',
+        'Lampaert',
+        'Lampard',
+        'Lampart',
+        'Lamperd',
+        'Lampert',
+        'Lamport',
+        'Limbert',
+        'Lombard',
+      ];
+      expectEncodings(soundex, inputs, 'L7081096');
+
+      inputs = [
+        'Nolton',
+        'Noulton',
+      ];
+      expectEncodings(soundex, inputs, 'N807608');
     });
 
     test('test similarity measure', () {
       final soundex = RefinedSoundex();
 
       // Edge cases
-      expect(0, soundex.difference(null, null));
-      expect(0, soundex.difference('', ''));
-      expect(0, soundex.difference(' ', ' '));
+      expect(0, PhoneticUtils.differences(soundex, null, null)[0]);
+      expect(0, PhoneticUtils.differences(soundex, '', '')[0]);
+      expect(0, PhoneticUtils.differences(soundex, ' ', ' ')[0]);
 
       // Normal cases
-      expect(6, soundex.difference('Smith', 'Smythe'));
-      expect(3, soundex.difference('Ann', 'Andrew'));
-      expect(1, soundex.difference('Margaret', 'Andrew'));
-      expect(1, soundex.difference('Janet', 'Margaret'));
+      expect(6, PhoneticUtils.differences(soundex, 'Smith', 'Smythe')[0]);
+      expect(3, PhoneticUtils.differences(soundex, 'Ann', 'Andrew')[0]);
+      expect(1, PhoneticUtils.differences(soundex, 'Margaret', 'Andrew')[0]);
+      expect(1, PhoneticUtils.differences(soundex, 'Janet', 'Margaret')[0]);
 
       // Special cases
-      expect(5, soundex.difference('Green', 'Greene'));
-      expect(1, soundex.difference('Blotchet-Halls', 'Greene'));
-      expect(8, soundex.difference('Smithers', 'Smythers'));
-      expect(5, soundex.difference('Anothers', 'Brothers'));
+      expect(5, PhoneticUtils.differences(soundex, 'Green', 'Greene')[0]);
+      expect(
+          1, PhoneticUtils.differences(soundex, 'Blotchet-Halls', 'Greene')[0]);
+      expect(8, PhoneticUtils.differences(soundex, 'Smithers', 'Smythers')[0]);
+      expect(5, PhoneticUtils.differences(soundex, 'Anothers', 'Brothers')[0]);
     });
   });
 }

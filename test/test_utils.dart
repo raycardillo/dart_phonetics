@@ -20,13 +20,23 @@ import 'package:dart_phonetics/src/encoder.dart';
 import 'package:test/test.dart';
 
 /// Verify an encoding matches [expected] for a single [input].
-void expectEncoding(PhoneticEncoder encoder, String input, String expected) {
-  expect(encoder.encode(input), expected, reason: 'Verfication failed for input=$input');
+void expectEncoding(
+    PhoneticEncoder encoder, String input, String expectedPrimary,
+    [String expectedAlternate]) {
+  final encoding = encoder.encode(input);
+  expect(encoding?.primary, expectedPrimary,
+      reason: 'Primary failed for input=$input');
+  if (expectedAlternate != null) {
+    expect(encoding?.alternate, expectedAlternate,
+        reason: 'Alternate failed for input=$input');
+  }
 }
 
 /// Verify an encoding matches [expected] for a list of [inputs].
-void expectEncodings(PhoneticEncoder encoder, List<String> inputs, String expected) {
+void expectEncodings(
+    PhoneticEncoder encoder, List<String> inputs, String expectedPrimary,
+    [String expectedAlternate]) {
   inputs.forEach((input) {
-    expectEncoding(encoder, input, expected);
+    expectEncoding(encoder, input, expectedPrimary, expectedAlternate);
   });
 }
