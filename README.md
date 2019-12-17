@@ -1,5 +1,4 @@
 # Dart Phonetics
-================
 
 [![Project license](https://img.shields.io/badge/license-Apache%202.0-informational)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Pub package](https://img.shields.io/pub/v/dart_phonetics)](https://pub.dev/packages/dart_phonetics)
@@ -7,6 +6,7 @@
 
 A collection of phonetic algorithms for [Dart](https://dart.dev/) and [Flutter](https://flutter.dev/). These algorithms help find words or names that sound similar by generating an encoding that can be compared or indexed for fuzzy searching.
 
+----------------
 
 ## Algorithms Implemented
 
