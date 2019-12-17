@@ -235,7 +235,8 @@ void main() {
     });
 
     test('test ignore hyphens', () {
-      final soundex = Soundex.fromMapping(Soundex.americanMapping, hyphenatedPartsEnabled: false);
+      final soundex = Soundex.fromMapping(Soundex.americanMapping,
+          hyphenatedPartsEnabled: false);
       final inputs = [
         'KINGSMITH',
         '-KINGSMITH',
@@ -507,9 +508,8 @@ void main() {
     });
 
     test('test prefix encodings', () {
-      final soundex =
-          Soundex.fromMapping(Soundex.americanMapping, prefixesEnabled: true,
-              hyphenatedPartsEnabled: false);
+      final soundex = Soundex.fromMapping(Soundex.americanMapping,
+          prefixesEnabled: true, hyphenatedPartsEnabled: false);
 
       // make sure that we don't get alternates when not relevant
       expectEncoding(soundex, 'testing', 'T235', null);
@@ -551,9 +551,8 @@ void main() {
     });
 
     test('test hyphenated encodings', () {
-      final soundex =
-          Soundex.fromMapping(Soundex.americanMapping, prefixesEnabled: true,
-              hyphenatedPartsEnabled: true);
+      final soundex = Soundex.fromMapping(Soundex.americanMapping,
+          prefixesEnabled: true, hyphenatedPartsEnabled: true);
 
       // make sure that we don't get alternates when not relevant
       expectEncoding(soundex, 'testing', 'T235', null);
@@ -565,12 +564,11 @@ void main() {
       expectEncoding(soundex, 'WILLIAMS-LLOYD', 'W452', ['L300']);
       expectEncoding(soundex, 'Smith - Wesson', 'S530', ['W250']);
       expectEncoding(soundex, 'Smith - Wesson-WILLIAMS-LLOYD', 'S530',
-          ['W250','W452','L300']);
+          ['W250', 'W452', 'L300']);
 
       // hyphenated with prefixes provide even more alternates
       expectEncoding(soundex, "von Neumann - D'Asti - L'Cruz - De la Hunt",
-          'V555',
-          ['N550','D230','A230','L262','C620','D453','H530']);
+          'V555', ['N550', 'D230', 'A230', 'L262', 'C620', 'D453', 'H530']);
     });
   });
 

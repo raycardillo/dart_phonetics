@@ -1,8 +1,8 @@
 import 'package:dart_phonetics/dart_phonetics.dart';
 
 void _printResult(Object encoder, String input, PhoneticEncoding encoding) {
-  print('${encoder?.runtimeType?.toString()} - "$input"\n  primary = ${encoding
-      ?.primary}\n  alternate = ${encoding?.alternates}\n');
+  print(
+      '${encoder?.runtimeType?.toString()} - "$input"\n  primary = ${encoding?.primary}\n  alternate = ${encoding?.alternates}\n');
 }
 
 void main() {
