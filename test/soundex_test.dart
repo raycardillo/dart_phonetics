@@ -31,8 +31,8 @@ void main() {
       expectEncoding(Soundex.americanEncoder, 'Williams', 'W452');
       expectEncoding(
           Soundex.fromMapping(Soundex.americanMapping), 'Williams', 'W452');
-      expectEncoding(Soundex.fromMapping(Soundex.americanMapping),
-          'Williams', 'W452');
+      expectEncoding(
+          Soundex.fromMapping(Soundex.americanMapping), 'Williams', 'W452');
     });
   });
 
@@ -53,8 +53,8 @@ void main() {
     });
 
     test('test max length', () {
-      final soundex3 = Soundex.fromMapping(Soundex.americanMapping,
-          maxLength: 3);
+      final soundex3 =
+          Soundex.fromMapping(Soundex.americanMapping, maxLength: 3);
       expectEncoding(soundex3, 'testing', 'T23');
       expectEncoding(soundex3, 'The', 'T00');
       expectEncoding(soundex3, 'quick', 'Q20');
@@ -66,8 +66,8 @@ void main() {
       expectEncoding(soundex3, 'lazy', 'L20');
       expectEncoding(soundex3, 'dogs', 'D20');
 
-      final soundex5 = Soundex.fromMapping(Soundex.americanMapping,
-          maxLength: 5);
+      final soundex5 =
+          Soundex.fromMapping(Soundex.americanMapping, maxLength: 5);
       expectEncoding(soundex5, 'testing', 'T2352');
       expectEncoding(soundex5, 'The', 'T0000');
       expectEncoding(soundex5, 'quick', 'Q2000');
@@ -79,8 +79,8 @@ void main() {
       expectEncoding(soundex5, 'lazy', 'L2000');
       expectEncoding(soundex5, 'dogs', 'D2000');
 
-      final soundex20 = Soundex.fromMapping(Soundex.americanMapping,
-          maxLength: 20);
+      final soundex20 =
+          Soundex.fromMapping(Soundex.americanMapping, maxLength: 20);
       expectEncoding(soundex20, 'testing', 'T2352000000000000000');
       expectEncoding(soundex20, 'supercalifragilistic', 'S1624162423200000000');
 
@@ -89,8 +89,8 @@ void main() {
       expectEncoding(soundex10, 'testing', 'T2352');
       expectEncoding(soundex10, 'supercalifragilistic', 'S162416242');
 
-      final soundexNoMax = Soundex.fromMapping(Soundex.americanMapping,
-          maxLength: null);
+      final soundexNoMax =
+          Soundex.fromMapping(Soundex.americanMapping, maxLength: null);
       expectEncoding(soundexNoMax, 'testing', 'T2352');
       expectEncoding(soundexNoMax, 'supercalifragilistic', 'S16241624232');
     });
@@ -154,6 +154,9 @@ void main() {
     test('test normal encoding of special cases', () {
       final soundex = Soundex();
 
+      // http://www.genealogyintime.com/GenealogyResources/Articles/what_is_soundex_and_how_does_soundex_work_page2.html
+      expectEncoding(soundex, 'Johnston', 'J523');
+
       // in the standard mapping 'Lippmann' is 'L155' (see genealogy for alt)
       expectEncoding(soundex, 'Lippmann', 'L155');
 
@@ -209,6 +212,10 @@ void main() {
       expectEncoding(soundex, 'Ashclown', 'A245');
       expectEncoding(soundex, 'Shishko', 'S200');
       expectEncoding(soundex, 'Qashqar', 'Q260');
+
+      // prefixes and double barrels should not be encoded when not enabled
+      expectEncoding(soundex, 'von Neumann', 'V555', null);
+      expectEncoding(soundex, 'WILLIAMS-LLOYD', 'W452', null);
     });
 
     test('test ignore apostrophes', () {
@@ -228,7 +235,7 @@ void main() {
     });
 
     test('test ignore hyphens', () {
-      final soundex = Soundex();
+      final soundex = Soundex.fromMapping(Soundex.americanMapping, hyphenatedPartsEnabled: false);
       final inputs = [
         'KINGSMITH',
         '-KINGSMITH',
@@ -259,7 +266,7 @@ void main() {
       // Consonants from the same code group separated by W or H are treated as one.
       // Test data from http://www.myatt.demon.co.uk/sxalg.htm
       expectEncoding(soundex, 'BOOTHDAVIS', 'B312');
-      expectEncoding(soundex, 'BOOTH-DAVIS', 'B312');
+      expectEncoding(soundex, 'BOOTH-DAVIS', 'B300', ['D120']);
 
       // Consonants from the same code group separated by W or H are treated as one.
       expectEncoding(soundex, 'Sgler', 'S460');
@@ -498,6 +505,73 @@ void main() {
       expectEncoding(soundex, 'Dwdds', 'D320'); // w is a separator
       expectEncoding(soundex, 'Dhdds', 'D320'); // h is a separator
     });
+
+    test('test prefix encodings', () {
+      final soundex =
+          Soundex.fromMapping(Soundex.americanMapping, prefixesEnabled: true,
+              hyphenatedPartsEnabled: false);
+
+      // make sure that we don't get alternates when not relevant
+      expectEncoding(soundex, 'testing', 'T235', null);
+
+      // https://www.ics.uci.edu/~dan/genealogy/Miller/javascrp/soundex.htm
+      expectEncoding(soundex, 'vanDever', 'V531', ['D160']);
+
+      expectEncoding(soundex, "Conway", 'C500', ['W000']);
+      expectEncoding(soundex, 'DeHunt', 'D530', ['H530']);
+      expectEncoding(soundex, 'De Hunt', 'D530', ['H530']);
+      expectEncoding(soundex, 'DelaHunt', 'D453', ['H530']);
+      expectEncoding(soundex, 'Dela Hunt', 'D453', ['H530']);
+      expectEncoding(soundex, 'De la Hunt', 'D453', ['H530']);
+      expectEncoding(soundex, "DiOrio", 'D600', ['O600']);
+      expectEncoding(soundex, "Dupont", 'D153', ['P530']);
+      expectEncoding(soundex, "DeCicco", 'D220', ['C200']);
+      expectEncoding(soundex, "D'Asti", 'D230', ['A230']);
+      expectEncoding(soundex, 'la Cruz', 'L262', ['C620']);
+      expectEncoding(soundex, 'LaFontaine', 'L153', ['F535']);
+      expectEncoding(soundex, 'LeFavre', 'L116', ['F160']);
+      expectEncoding(soundex, "L'Cruz", 'L262', ['C620']);
+      expectEncoding(soundex, "L'Favre", 'L116', ['F160']);
+      expectEncoding(soundex, 'Vandeusen', 'V532', ['D250']);
+      expectEncoding(soundex, 'van Deusen', 'V532', ['D250']);
+      expectEncoding(soundex, 'vanDamme', 'V535', ['D500']);
+      expectEncoding(soundex, 'VonNewman', 'V555', ['N550']);
+      expectEncoding(soundex, 'von Neumann', 'V555', ['N550']);
+
+      // verify that Mc, Mac, and O' are not treated as a prefix
+      expectEncoding(soundex, 'McDonald', 'M235', null);
+      expectEncoding(soundex, 'MacDonald', 'M235', null);
+      expectEncoding(soundex, 'Mac Donald', 'M235', null);
+      expectEncoding(soundex, "O'Donnell", 'O354', null);
+
+      // double barrel names do not provide alts when not configured
+      expectEncoding(soundex, 'WILLIAMS-LLOYD', 'W452', null);
+      // notice that this one catches the 'W' as well when hyphens are enabled
+      expectEncoding(soundex, 'Smith - Wesson', 'S532', null);
+    });
+
+    test('test hyphenated encodings', () {
+      final soundex =
+          Soundex.fromMapping(Soundex.americanMapping, prefixesEnabled: true,
+              hyphenatedPartsEnabled: true);
+
+      // make sure that we don't get alternates when not relevant
+      expectEncoding(soundex, 'testing', 'T235', null);
+
+      // make sure simple prefixes are working as expected
+      expectEncoding(soundex, 'DelaHunt', 'D453', ['H530']);
+
+      // hyphenated names provide alternates when enabled
+      expectEncoding(soundex, 'WILLIAMS-LLOYD', 'W452', ['L300']);
+      expectEncoding(soundex, 'Smith - Wesson', 'S530', ['W250']);
+      expectEncoding(soundex, 'Smith - Wesson-WILLIAMS-LLOYD', 'S530',
+          ['W250','W452','L300']);
+
+      // hyphenated with prefixes provide even more alternates
+      expectEncoding(soundex, "von Neumann - D'Asti - L'Cruz - De la Hunt",
+          'V555',
+          ['N550','D230','A230','L262','C620','D453','H530']);
+    });
   });
 
   group('Difference Tests', () {
@@ -505,21 +579,24 @@ void main() {
       final soundex = Soundex();
 
       // Edge cases
-      expect(0, PhoneticUtils.differences(soundex, null, null)[0]);
-      expect(0, PhoneticUtils.differences(soundex, '', '')[0]);
-      expect(0, PhoneticUtils.differences(soundex, ' ', ' ')[0]);
+      expect(0, PhoneticUtils.primaryDifference(soundex, null, null));
+      expect(0, PhoneticUtils.primaryDifference(soundex, '', ''));
+      expect(0, PhoneticUtils.primaryDifference(soundex, ' ', ' '));
 
       // Normal cases
-      expect(4, PhoneticUtils.differences(soundex, 'Smith', 'Smythe')[0]);
-      expect(2, PhoneticUtils.differences(soundex, 'Ann', 'Andrew')[0]);
-      expect(1, PhoneticUtils.differences(soundex, 'Margaret', 'Andrew')[0]);
-      expect(0, PhoneticUtils.differences(soundex, 'Janet', 'Margaret')[0]);
+      expect(4, PhoneticUtils.primaryDifference(soundex, 'Smith', 'Smythe'));
+      expect(2, PhoneticUtils.primaryDifference(soundex, 'Ann', 'Andrew'));
+      expect(1, PhoneticUtils.primaryDifference(soundex, 'Margaret', 'Andrew'));
+      expect(0, PhoneticUtils.primaryDifference(soundex, 'Janet', 'Margaret'));
 
       // Special cases
-      expect(4, PhoneticUtils.differences(soundex, 'Green', 'Greene')[0]);
-      expect(0, PhoneticUtils.differences(soundex, 'Blotchet-Halls', 'Greene')[0]);
-      expect(4, PhoneticUtils.differences(soundex, 'Smithers', 'Smythers')[0]);
-      expect(2, PhoneticUtils.differences(soundex, 'Anothers', 'Brothers')[0]);
+      expect(4, PhoneticUtils.primaryDifference(soundex, 'Green', 'Greene'));
+      expect(0,
+          PhoneticUtils.primaryDifference(soundex, 'Blotchet-Halls', 'Greene'));
+      expect(
+          4, PhoneticUtils.primaryDifference(soundex, 'Smithers', 'Smythers'));
+      expect(
+          2, PhoneticUtils.primaryDifference(soundex, 'Anothers', 'Brothers'));
     });
   });
 }

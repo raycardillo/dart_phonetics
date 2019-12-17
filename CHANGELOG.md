@@ -1,3 +1,8 @@
+## 0.1.0-dev.4
+
+* Refactored soundex again to support surname prefixes and hyphenated names
+* More tests added
+
 ## 0.1.0-dev.3
 
 * Refactored soundex for more variants

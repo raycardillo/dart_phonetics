@@ -28,9 +28,10 @@ import 'package:dart_phonetics/src/utils.dart';
 /// sure you know which variant you need if working with existing data. The
 /// most notable exceptions are in census data and SQL implementations.
 ///
-/// The implementation of this class is unique because it uses a common
-/// strategy that is configurable to support many variants. In particular,
-/// it's possible to use this strategy for other languages or character sets.
+/// The implementation of this class is unique because it uses a mapping
+/// strategy with several configurable behaviors that can be enabled or
+/// disabled to support many variants. it's also possible to use a custom
+/// mapping for other languages or character sets.
 ///
 /// For convenience, there are several static instances available for some of
 /// the more common implementations:
@@ -44,16 +45,26 @@ import 'package:dart_phonetics/src/utils.dart';
 /// - [genealogyEncoder] - Implements the rules from the _genealogy.com_
 /// (https://www.genealogy.com/articles/research/00000060.html) website. This
 /// is the same as the [americanEncoder] but ignored characters are not
-/// tracked and are completely ignored instead.
+/// tracked for consonant breaks and are completely ignored instead.
 ///
 /// If you want (or need) to understand more details, here are some good
 /// references that help explain the history and variants:
+/// - https://web.archive.org/web/20011107131342/http://www.bluepoof.com/Soundex/info.html
 /// - http://creativyst.com/Doc/Articles/SoundEx1/SoundEx1.htm
 /// - https://west-penwith.org.uk/misc/soundex.htm
 class Soundex implements PhoneticEncoder {
   /// The character mapping to use when encoding. A value of [$nul] means
   /// ignore the input character and do not encode it (e.g., vowels).
   final Map<int, int> soundexMapping;
+
+  /// Indicates that prefix processing is enabled (and will be returned as
+  /// [PhoneticEncoding.alternate] when available). This also detects the
+  /// second part of a double barreled name.
+  final bool prefixesEnabled;
+
+  /// Indicates that hyphenated parts processing is enabled. When enabled,
+  /// any parts that are found are also encoded and returned as alternates.
+  final bool hyphenatedPartsEnabled;
 
   /// Indicates if [$H] and [$W] should be completely ignored and not mapped
   /// at all. This is a special case for some census data.
@@ -120,29 +131,61 @@ class Soundex implements PhoneticEncoder {
   //#region Constructors
 
   /// Private constructor for initializing an instance.
-  Soundex._internal(this.soundexMapping, this.ignoreHW, this.trackIgnored,
-      this.maxLength, this.paddingChar, this.paddingEnabled);
+  Soundex._internal(
+      this.soundexMapping,
+      this.prefixesEnabled,
+      this.hyphenatedPartsEnabled,
+      this.ignoreHW,
+      this.trackIgnored,
+      this.maxLength,
+      this.paddingChar,
+      this.paddingEnabled);
 
   /// Creates a custom Soundex instance. This constructor can be used to
   /// provide custom mappings for non-Western character sets, etc.
   factory Soundex.fromMapping(final Map<int, int> soundexMapping,
-          {bool ignoreHW = true,
+          {bool prefixesEnabled = true,
+          bool hyphenatedPartsEnabled = true,
+          bool ignoreHW = true,
           bool trackIgnored = true,
           int maxLength = 4,
           int paddingChar = $0,
           bool paddingEnabled = true}) =>
-      Soundex._internal(Map.unmodifiable(soundexMapping), ignoreHW,
-          trackIgnored, maxLength, paddingChar, paddingEnabled);
+      Soundex._internal(
+          Map.unmodifiable(soundexMapping),
+          prefixesEnabled,
+          hyphenatedPartsEnabled,
+          ignoreHW,
+          trackIgnored,
+          maxLength,
+          paddingChar,
+          paddingEnabled);
 
   /// Gets the [americanEncoder] instance of the Soundex encoder by default.
   factory Soundex() => americanEncoder;
 
   //#endregion
 
-  /// Returns a [PhoneticEncoding] for the [input] String.
+  /// Trims well known surname prefixes. This is very subject to interpretation
+  /// but see the NARA specification as well as the following reference that
+  /// provided some additional information and guidance:
+  /// http://www.genealogyintime.com/GenealogyResources/Articles/what_is_soundex_and_how_does_soundex_work_page2.html
+  String _trimPrefixes(String input) {
+    return input.replaceFirst(
+        RegExp(r"^(Con|Dela|De La|Di|Du|De|D'|La|Le|L'|Van|Von)\s*",
+            caseSensitive: false),
+        '');
+  }
+
+  /// Splits the string into two parts of a double barrel (using the hyphen).
+  /// The second part will be `null` if a double barrel name was not found.
+  List<String> _splitHyphenatedParts(String input) {
+    return input.split(RegExp(r'\s*-\s*'));
+  }
+
+  /// Returns a single encoding for the [input] String.
   /// Returns `null` if the input is `null` or empty (after cleaning up).
-  @override
-  PhoneticEncoding encode(String input) {
+  String _encode(String input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input);
     if (input == null) {
@@ -194,6 +237,63 @@ class Soundex implements PhoneticEncoder {
       }
     }
 
-    return PhoneticEncoding(soundex.toString());
+    return soundex.toString();
+  }
+
+  /// Adds an encoding to [alternates] if there was a known prefix present.
+  void _addTrimmedPrefixToAlternates(
+      final Set<String> alternates, final String input) {
+    final trimmed = _trimPrefixes(input);
+    if (trimmed.length < input.length) {
+      alternates.add(_encode(trimmed));
+    }
+  }
+
+  /// Returns a [PhoneticEncoding] for the [input] String.
+  /// Returns `null` if the input is `null` or empty (after cleaning up).
+  @override
+  PhoneticEncoding encode(String input) {
+    if (input == null || input.isEmpty) {
+      return null;
+    }
+
+    List<String> parts;
+    if (hyphenatedPartsEnabled) {
+      parts = _splitHyphenatedParts(input);
+    } else {
+      parts = [input];
+    }
+
+    final iterator = parts.iterator;
+    if (!iterator.moveNext()) {
+      return null;
+    }
+
+    // first we encode the primary part
+    final firstPart = iterator.current;
+    final primary = _encode(firstPart);
+
+    // ignore: prefer_collection_literals
+    final alternates = Set<String>();
+
+    if (prefixesEnabled) {
+      _addTrimmedPrefixToAlternates(alternates, firstPart);
+    }
+
+    // now go through all parts and add more alternates
+    while (iterator.moveNext()) {
+      final part = iterator.current;
+      if (part != null) {
+        alternates.add(_encode(part));
+        if (prefixesEnabled) {
+          _addTrimmedPrefixToAlternates(alternates, part);
+        }
+      }
+    }
+
+    // remove the primary if it made it into the alternate list from others
+    alternates.remove(primary);
+
+    return PhoneticEncoding(primary, alternates.isEmpty ? null : alternates);
   }
 }

@@ -196,22 +196,24 @@ void main() {
       final soundex = RefinedSoundex();
 
       // Edge cases
-      expect(0, PhoneticUtils.differences(soundex, null, null)[0]);
-      expect(0, PhoneticUtils.differences(soundex, '', '')[0]);
-      expect(0, PhoneticUtils.differences(soundex, ' ', ' ')[0]);
+      expect(0, PhoneticUtils.primaryDifference(soundex, null, null));
+      expect(0, PhoneticUtils.primaryDifference(soundex, '', ''));
+      expect(0, PhoneticUtils.primaryDifference(soundex, ' ', ' '));
 
       // Normal cases
-      expect(6, PhoneticUtils.differences(soundex, 'Smith', 'Smythe')[0]);
-      expect(3, PhoneticUtils.differences(soundex, 'Ann', 'Andrew')[0]);
-      expect(1, PhoneticUtils.differences(soundex, 'Margaret', 'Andrew')[0]);
-      expect(1, PhoneticUtils.differences(soundex, 'Janet', 'Margaret')[0]);
+      expect(6, PhoneticUtils.primaryDifference(soundex, 'Smith', 'Smythe'));
+      expect(3, PhoneticUtils.primaryDifference(soundex, 'Ann', 'Andrew'));
+      expect(1, PhoneticUtils.primaryDifference(soundex, 'Margaret', 'Andrew'));
+      expect(1, PhoneticUtils.primaryDifference(soundex, 'Janet', 'Margaret'));
 
       // Special cases
-      expect(5, PhoneticUtils.differences(soundex, 'Green', 'Greene')[0]);
+      expect(5, PhoneticUtils.primaryDifference(soundex, 'Green', 'Greene'));
+      expect(1,
+          PhoneticUtils.primaryDifference(soundex, 'Blotchet-Halls', 'Greene'));
       expect(
-          1, PhoneticUtils.differences(soundex, 'Blotchet-Halls', 'Greene')[0]);
-      expect(8, PhoneticUtils.differences(soundex, 'Smithers', 'Smythers')[0]);
-      expect(5, PhoneticUtils.differences(soundex, 'Anothers', 'Brothers')[0]);
+          8, PhoneticUtils.primaryDifference(soundex, 'Smithers', 'Smythers'));
+      expect(
+          5, PhoneticUtils.primaryDifference(soundex, 'Anothers', 'Brothers'));
     });
   });
 }

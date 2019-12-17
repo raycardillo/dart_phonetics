@@ -22,21 +22,21 @@ import 'package:test/test.dart';
 /// Verify an encoding matches [expected] for a single [input].
 void expectEncoding(
     PhoneticEncoder encoder, String input, String expectedPrimary,
-    [String expectedAlternate]) {
+    [List<String> expectedAlternates]) {
   final encoding = encoder.encode(input);
   expect(encoding?.primary, expectedPrimary,
       reason: 'Primary failed for input=$input');
-  if (expectedAlternate != null) {
-    expect(encoding?.alternate, expectedAlternate,
-        reason: 'Alternate failed for input=$input');
+  if (expectedAlternates != null) {
+    expect(encoding?.alternates, expectedAlternates,
+        reason: 'Alternates failed for input=$input');
   }
 }
 
 /// Verify an encoding matches [expected] for a list of [inputs].
 void expectEncodings(
     PhoneticEncoder encoder, List<String> inputs, String expectedPrimary,
-    [String expectedAlternate]) {
+    [List<String> expectedAlternates]) {
   inputs.forEach((input) {
-    expectEncoding(encoder, input, expectedPrimary, expectedAlternate);
+    expectEncoding(encoder, input, expectedPrimary, expectedAlternates);
   });
 }

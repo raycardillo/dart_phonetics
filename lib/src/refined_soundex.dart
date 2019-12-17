@@ -27,6 +27,10 @@ import 'package:dart_phonetics/src/soundex.dart';
 /// support other languages or character sets by providing a custom mapping.
 ///
 /// See [Soundex] for more background and references to Soundex algorithms.
+///
+/// A good description of Refined Soundex can be found here:
+/// - https://web.archive.org/web/20010513121003/http://www.bluepoof.com:80/Soundex/info2.html
+/// - http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
 class RefinedSoundex implements PhoneticEncoder {
   /// The character mapping to use when encoding. A value of [$nul] means
   /// ignore the input character and do not encode it (e.g., vowels).

@@ -42,19 +42,22 @@ class PhoneticEncoderException implements Exception {
   }
 }
 
-/// The common interface for all phonetic encoders.
+/// A data class that provides a [primary] encoding as well as a set
+/// of _optional_ [alternates].
 class PhoneticEncoding {
   /// The primary phonetic encoding.
   final String primary;
 
   /// An alternative phonetic encoding for algorithms that support this.
-  final String alternate;
+  final Set<String> alternates;
 
-  PhoneticEncoding(this.primary, [this.alternate]);
+  /// Creates an instance of this data class.
+  PhoneticEncoding(this.primary, [this.alternates]);
 
+  /// Returns a [String] that's useful for debugging or diagnostics.
   @override
   String toString() {
-    return 'PhoneticEncoding{primary=$primary, alternate=$alternate}';
+    return 'PhoneticEncoding{primary=$primary, alternates=$alternates}';
   }
 }
 

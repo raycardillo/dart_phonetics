@@ -74,24 +74,21 @@ class PhoneticUtils {
     return String.fromCharCodes(cleanedCodeUnits).toUpperCase();
   }
 
-  /// Encodes [s1] and [s2] using [encoder] and then returns an array
-  /// containing the [differenceEncoded] similarity valude for the
-  /// [PhoneticEncoding.primary] and [PhoneticEncoding.alternate] encodings.
+  /// Encodes [s1] and [s2] using [encoder] and then returns the similarity
+  /// for the [PhoneticEncoding.primary] encoding.
   ///
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
-  static List<int> differences(
+  static int primaryDifference(
       final PhoneticEncoder encoder, final String s1, final String s2) {
     final encoding1 = encoder.encode(s1);
     final encoding2 = encoder.encode(s2);
 
-    return [
-      differenceEncoded(encoding1?.primary, encoding2?.primary),
-      differenceEncoded(encoding1?.alternate, encoding2?.alternate),
-    ];
+    return differenceEncoded(encoding1?.primary, encoding2?.primary);
   }
 
-  /// Returns the number of characters that are the same in [e1] and [e2].
+  /// Returns the number of characters that are the same in the [e1] and [e2]
+  /// encoded strings.
   ///
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
