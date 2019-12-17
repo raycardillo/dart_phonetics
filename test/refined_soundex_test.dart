@@ -48,6 +48,40 @@ void main() {
       expectEncoding(soundex, 'dogs', 'D6043');
     });
 
+    test('test max length', () {
+      final soundex4 = RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping,
+          maxLength: 4);
+      expectEncoding(soundex4, 'testing', 'T603');
+      expectEncoding(soundex4, 'The', 'T60');
+      expectEncoding(soundex4, 'quick', 'Q503');
+      expectEncoding(soundex4, 'brown', 'B190');
+      expectEncoding(soundex4, 'fox', 'F205');
+      expectEncoding(soundex4, 'jumped', 'J408');
+      expectEncoding(soundex4, 'over', 'O020');
+      expectEncoding(soundex4, 'the', 'T60');
+      expectEncoding(soundex4, 'lazy', 'L705');
+      expectEncoding(soundex4, 'dogs', 'D604');
+
+      final soundex5 = RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping,
+          maxLength: 5);
+      expectEncoding(soundex5, 'testing', 'T6036');
+      expectEncoding(soundex5, 'The', 'T60');
+      expectEncoding(soundex5, 'quick', 'Q503');
+      expectEncoding(soundex5, 'brown', 'B1908');
+      expectEncoding(soundex5, 'fox', 'F205');
+      expectEncoding(soundex5, 'jumped', 'J4081');
+      expectEncoding(soundex5, 'over', 'O0209');
+      expectEncoding(soundex5, 'the', 'T60');
+      expectEncoding(soundex5, 'lazy', 'L7050');
+      expectEncoding(soundex5, 'dogs', 'D6043');
+
+      final soundex20 = RefinedSoundex.fromMapping(
+          RefinedSoundex.defaultMapping,
+          maxLength: 20);
+      expectEncoding(soundex20, 'testing', 'T6036084');
+      expectEncoding(soundex20, 'supercalifragilistic', 'S3010930702904070360');
+    });
+
     test('test irregular characters', () {
       final soundex = RefinedSoundex();
 

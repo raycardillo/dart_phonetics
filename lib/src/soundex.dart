@@ -182,13 +182,13 @@ class Soundex implements PhoneticEncoder {
         }
       }
 
-      if (soundex.length >= maxLength) {
+      if (maxLength != null && soundex.length >= maxLength) {
         break;
       }
     }
 
     // pad the encoding if required
-    if (paddingEnabled) {
+    if (paddingEnabled && maxLength != null) {
       while (soundex.length < maxLength) {
         soundex.writeCharCode(paddingChar);
       }

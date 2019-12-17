@@ -52,6 +52,49 @@ void main() {
       expectEncoding(soundex, 'dogs', 'D200');
     });
 
+    test('test max length', () {
+      final soundex3 = Soundex.fromMapping(Soundex.americanMapping,
+          maxLength: 3);
+      expectEncoding(soundex3, 'testing', 'T23');
+      expectEncoding(soundex3, 'The', 'T00');
+      expectEncoding(soundex3, 'quick', 'Q20');
+      expectEncoding(soundex3, 'brown', 'B65');
+      expectEncoding(soundex3, 'fox', 'F20');
+      expectEncoding(soundex3, 'jumped', 'J51');
+      expectEncoding(soundex3, 'over', 'O16');
+      expectEncoding(soundex3, 'the', 'T00');
+      expectEncoding(soundex3, 'lazy', 'L20');
+      expectEncoding(soundex3, 'dogs', 'D20');
+
+      final soundex5 = Soundex.fromMapping(Soundex.americanMapping,
+          maxLength: 5);
+      expectEncoding(soundex5, 'testing', 'T2352');
+      expectEncoding(soundex5, 'The', 'T0000');
+      expectEncoding(soundex5, 'quick', 'Q2000');
+      expectEncoding(soundex5, 'brown', 'B6500');
+      expectEncoding(soundex5, 'fox', 'F2000');
+      expectEncoding(soundex5, 'jumped', 'J5130');
+      expectEncoding(soundex5, 'over', 'O1600');
+      expectEncoding(soundex5, 'the', 'T0000');
+      expectEncoding(soundex5, 'lazy', 'L2000');
+      expectEncoding(soundex5, 'dogs', 'D2000');
+
+      final soundex20 = Soundex.fromMapping(Soundex.americanMapping,
+          maxLength: 20);
+      expectEncoding(soundex20, 'testing', 'T2352000000000000000');
+      expectEncoding(soundex20, 'supercalifragilistic', 'S1624162423200000000');
+
+      final soundex10 = Soundex.fromMapping(Soundex.americanMapping,
+          maxLength: 10, paddingEnabled: false);
+      expectEncoding(soundex10, 'testing', 'T2352');
+      expectEncoding(soundex10, 'supercalifragilistic', 'S162416242');
+
+      final soundexNoMax = Soundex.fromMapping(Soundex.americanMapping,
+          maxLength: null);
+      expectEncoding(soundexNoMax, 'testing', 'T2352');
+      expectEncoding(soundexNoMax, 'supercalifragilistic', 'S16241624232');
+    });
+
     test('test irregular characters', () {
       final soundex = Soundex();
 
