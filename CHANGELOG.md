@@ -1,3 +1,7 @@
+## 0.1.0
+
+* Releasing stable build.
+
 ## 0.1.0-dev.5
 
 * Initial implementation of double metaphone

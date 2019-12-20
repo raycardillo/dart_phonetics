@@ -17,6 +17,8 @@
  */
 
 export 'src/encoder.dart';
-export 'src/refined_soundex.dart';
-export 'src/soundex.dart';
 export 'src/utils.dart';
+
+export 'src/soundex.dart';
+export 'src/refined_soundex.dart';
+export 'src/double_metaphone.dart';

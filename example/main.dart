@@ -1,6 +1,7 @@
 import 'package:dart_phonetics/dart_phonetics.dart';
 
-void _printResult(Object encoder, String input, PhoneticEncoding encoding) {
+void _printResult(PhoneticEncoder encoder, String input) {
+  final encoding = encoder.encode(input);
   print(
       '${encoder?.runtimeType?.toString()} - "$input"\n  primary = ${encoding?.primary}\n  alternate = ${encoding?.alternates}\n');
 }
@@ -9,12 +10,15 @@ void main() {
   final inputString = 'Cardillo-Ashcroft';
 
   final soundex = Soundex.americanEncoder;
-  _printResult(soundex, inputString, soundex.encode(inputString));
+  _printResult(soundex, inputString);
 
   final customSoundex = Soundex.fromMapping(Soundex.americanMapping,
       maxLength: null, paddingEnabled: false, ignoreHW: false);
-  _printResult(customSoundex, inputString, customSoundex.encode(inputString));
+  _printResult(customSoundex, inputString);
 
   final refinedSoundex = RefinedSoundex.defaultEncoder;
-  _printResult(refinedSoundex, inputString, refinedSoundex.encode(inputString));
+  _printResult(refinedSoundex, inputString);
+
+  final doubleMetaphone = DoubleMetaphone.withMaxLength(12);
+  _printResult(doubleMetaphone, inputString);
 }

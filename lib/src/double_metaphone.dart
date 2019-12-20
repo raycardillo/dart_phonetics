@@ -95,10 +95,10 @@ class _DoubleMetaphoneEncoding {
 
 /// Encodes a string to a Double Metaphone value. This implementation is
 /// based on the [algorithm that was published by Lawrence Philips in Dr.
-/// Dobbs](https://www.drdobbs.com/the-double-metaphone-search-algorithm/184401251?pgno=2).
-/// and includes the fixes published by others. Per specification, the
-/// encoding always contains two values. If there is no alternate, the
-/// primary and the alternate encodings will be the same.
+/// Dobbs](https://www.drdobbs.com/the-double-metaphone-search-algorithm/184401251?pgno=2)
+/// and includes fixes published by others since. By design, this encoding
+/// always contains two values. If there is no alternate, the primary and the
+/// alternate encodings will be the same.
 ///
 /// Note that this implementation avoids any class corruption or concurrency
 /// problems by avoiding class properties. All of the data required is passed
