@@ -94,7 +94,7 @@ class RefinedSoundex implements PhoneticEncoder {
   @override
   PhoneticEncoding encode(String input) {
     // clean up the input and convert to uppercase
-    input = PhoneticUtils.clean(input);
+    input = PhoneticUtils.clean(input, latin: false);
     if (input == null) {
       return null;
     }
@@ -111,9 +111,9 @@ class RefinedSoundex implements PhoneticEncoder {
     // encode all characters
     for (var charCode in input.codeUnits) {
       current = soundexMapping[charCode];
-      if (current == last) {
+      if (current == last || current == null) {
         continue;
-      } else if (current != null) {
+      } else {
         soundex.writeCharCode(current);
       }
 

@@ -92,11 +92,9 @@ void main() {
       expectEncoding(soundex, ' \t\n\r Washington \t\n\r ', 'W03084608');
     });
 
-    test('test ignore apostrophes', () {
+    test('test apostrophes', () {
       final soundex = RefinedSoundex();
       final inputs = [
-        'OBrien',
-        "'OBrien",
         "O'Brien",
         "OB'rien",
         "OBr'ien",

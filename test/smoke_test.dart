@@ -17,6 +17,7 @@
  */
 
 import 'package:dart_phonetics/dart_phonetics.dart';
+import 'package:dart_phonetics/src/double_metaphone.dart';
 import 'package:test/test.dart';
 
 import 'test_utils.dart';
@@ -33,17 +34,24 @@ void main() {
 
   group('Encoder Smoke Tests', () {
     test('smoke test - Soundex', () {
-      final soundex = Soundex.americanEncoder;
-      expectEncoding(soundex, 'Raymond', 'R553');
-      expectEncoding(soundex, 'Cardillo', 'C634');
-      expectEncoding(soundex, 'Who! What?', 'W300');
+      final encoder = Soundex.americanEncoder;
+      expectEncoding(encoder, 'Raymond', 'R553');
+      expectEncoding(encoder, 'Cardillo', 'C634');
+      expectEncoding(encoder, 'Who! What?', 'W300');
     });
 
     test('smoke test - Refined Soundex', () {
-      final soundex = Soundex.americanEncoder;
-      expectEncoding(soundex, 'Raymond', 'R553');
-      expectEncoding(soundex, 'Cardillo', 'C634');
-      expectEncoding(soundex, 'Who! What?', 'W300');
+      final encoder = Soundex.americanEncoder;
+      expectEncoding(encoder, 'Raymond', 'R553');
+      expectEncoding(encoder, 'Cardillo', 'C634');
+      expectEncoding(encoder, 'Who! What?', 'W300');
+    });
+
+    test('smoke test - Double Metaphone', () {
+      final encoder = DoubleMetaphone.defaultEncoder;
+      expectEncoding(encoder, 'Raymond', 'RMNT');
+      expectEncoding(encoder, 'Cardillo', 'KRTL');
+      expectEncoding(encoder, 'Who! What?', 'AT');
     });
   });
 }
