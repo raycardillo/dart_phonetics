@@ -1,11 +1,11 @@
 name: dart_phonetics
 description: A collection of phonetic algorithms. These algorithms help find words or names that sound similar by generating an encoding that can be compared or indexed for fuzzy searching.
-version: 0.1.0-dev.4
+version: 0.1.0-dev.5
 homepage: https://github.com/raycardillo/dart_phonetics
 repository: https://github.com/raycardillo/dart_phonetics
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   charcode: ^1.1.2

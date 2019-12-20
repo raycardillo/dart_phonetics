@@ -1,3 +1,8 @@
+## 0.1.0-dev.5
+
+* Initial implementation of double metaphone
+* Refactored some utils for 
+
 ## 0.1.0-dev.4
 
 * Refactored soundex again to support surname prefixes and hyphenated names

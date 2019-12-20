@@ -58,7 +58,7 @@ class Soundex implements PhoneticEncoder {
   final Map<int, int> soundexMapping;
 
   /// Indicates that prefix processing is enabled (and will be returned as
-  /// [PhoneticEncoding.alternate] when available). This also detects the
+  /// [PhoneticEncoding._alternate] when available). This also detects the
   /// second part of a double barreled name.
   final bool prefixesEnabled;
 
@@ -187,7 +187,7 @@ class Soundex implements PhoneticEncoder {
   /// Returns `null` if the input is `null` or empty (after cleaning up).
   String _encode(String input) {
     // clean up the input and convert to uppercase
-    input = PhoneticUtils.clean(input);
+    input = PhoneticUtils.clean(input, latin: false);
     if (input == null) {
       return null;
     }
@@ -273,8 +273,7 @@ class Soundex implements PhoneticEncoder {
     final firstPart = iterator.current;
     final primary = _encode(firstPart);
 
-    // ignore: prefer_collection_literals
-    final alternates = Set<String>();
+    final alternates = <String>{};
 
     if (prefixesEnabled) {
       _addTrimmedPrefixToAlternates(alternates, firstPart);

@@ -21,57 +21,75 @@ import 'package:dart_phonetics/src/encoder.dart';
 
 /// Common helpers and utilities.
 class PhoneticUtils {
-  /// Private implementation of [isLetter] without the extra error checking.
-  static bool _isLetter(int codeUnit) =>
-      (codeUnit >= $A && codeUnit <= $Z || codeUnit >= $a && codeUnit <= $z);
+  /// All characters that could be considered vowels.
+  static const Set<int> _VOWELS = {
+    $A,
+    $Agrave,
+    $Aacute,
+    $Acirc,
+    $Atilde,
+    $Auml,
+    $Aring,
+    $E,
+    $Egrave,
+    $Eacute,
+    $Ecirc,
+    $Euml,
+    $I,
+    $Igrave,
+    $Iacute,
+    $Icirc,
+    $Iuml,
+    $O,
+    $Ograve,
+    $Oacute,
+    $Ocirc,
+    $Otilde,
+    $Ouml,
+    $Oslash,
+    $U,
+    $Ugrave,
+    $Uacute,
+    $Ucirc,
+    $Uuml,
+    $Y,
+    $Yacute
+  };
 
-  /// This is currently only checking for characters in the range of `A-Z` or `a-z`.
-  static bool isLetter(int codeUnit) {
-    if (codeUnit == null) {
-      return null;
-    }
+  /// Filter pattern for cleaning simple characters.
+  static final _cleanRegExpSimple =
+      RegExp(r"[^A-Z'\-\.\\\/\s]", unicode: false);
 
-    return _isLetter(codeUnit);
+  /// Filter pattern for cleaning latin characters.
+  static final _cleanRegExpLatin =
+      RegExp(r"[^A-ZÇÑÀÁÂÃÄÅÈÉÊËÌÍÎÏÒÓÔÕÖØÙÚÛÜÝ'\-\.\\\/\s]", unicode: false);
+
+  /// Returns `true` if [charCode] is in a vowel (including special latin
+  /// characters). The input should be cleaned first (which optionally removes
+  /// latin characters if they are not desired).
+  static bool isVowel(final int charCode) {
+    return _VOWELS.contains(charCode);
   }
 
-  /// Private implementation of [isDigit] without the extra error checking.
-  static bool _isDigit(int codeUnit) => (codeUnit >= $0 && codeUnit <= $9);
-
-  /// This is currently only checking for radix 10 digit characters in the range of `0-9`.
-  static bool isDigit(int codeUnit) {
-    if (codeUnit == null) {
-      return null;
-    }
-
-    return _isDigit(codeUnit);
-  }
-
-  /// Uses [isLetter] and [isDigit] to determine if the character code is a letter or digit.
-  /// Returns `true` if [isLetter] is `true` or [isDigit] is `true`, `false` otherwise.
-  static bool isLetterOrDigit(int codeUnit) =>
-      (codeUnit == null ? null : _isLetter(codeUnit) || _isDigit(codeUnit));
-
-  /// Cleans up the input string before Soundex processing by only returning valid upper case letters.
-  /// Returns a cleaned version of the string.
-  static String clean(final String str) {
+  /// Returns a cleaned input string (that is ready for encoding) by removing
+  /// any illegal characters and converting the string to uppercase.
+  /// Note that we're not going to clean up valid characters that appear in
+  /// the wrong location because that would affect performance negatively for
+  /// an edge case that users of this function can do if they really need to.
+  static String clean(final String str, {bool latin = true}) {
     if (str == null || str.isEmpty) {
       return null;
     }
 
-    var codeUnits = str.codeUnits;
-    var cleanedCodeUnits = codeUnits.where((codeUnit) => isLetter(codeUnit));
-
-    if (cleanedCodeUnits.isEmpty) {
+    final cleaned = str
+        .trim()
+        .toUpperCase()
+        .replaceAll((latin) ? _cleanRegExpLatin : _cleanRegExpSimple, '');
+    if (cleaned.isEmpty) {
       return null;
     }
 
-    if (codeUnits.length == cleanedCodeUnits.length) {
-      // no need to do the extra create
-      return str.toUpperCase();
-    }
-
-    // create a new string from the cleaned version
-    return String.fromCharCodes(cleanedCodeUnits).toUpperCase();
+    return cleaned;
   }
 
   /// Encodes [s1] and [s2] using [encoder] and then returns the similarity

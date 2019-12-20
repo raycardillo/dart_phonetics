@@ -20,6 +20,23 @@ import 'package:dart_phonetics/src/encoder.dart';
 import 'package:test/test.dart';
 
 /// Verify an encoding matches [expected] for a single [input].
+void expectEncodingEquals(
+    PhoneticEncoder encoder, String input1, String input2) {
+  final encoding1 = encoder.encode(input1);
+  final encoding2 = encoder.encode(input2);
+
+  final foundMatch = ((encoding1?.primary == encoding2?.primary) ||
+      (encoding1?.alternates != null &&
+          encoding1.alternates.contains(encoding2?.primary)) ||
+      (encoding2?.alternates != null &&
+          encoding2.alternates.contains(encoding1?.primary)));
+
+  expect(true, foundMatch,
+      reason: 'Match not found between '
+          '$input1 => $encoding1 and $input2 => $encoding2');
+}
+
+/// Verify an encoding matches [expected] for a single [input].
 void expectEncoding(
     PhoneticEncoder encoder, String input, String expectedPrimary,
     [List<String> expectedAlternates]) {

@@ -13,6 +13,7 @@ A collection of phonetic algorithms for [Dart](https://dart.dev/) and [Flutter](
 
 - **American Soundex** - A highly configurable implementation of the Soundex algorithm. There are better algorithms available, but this algorithm is classic, and is required when analyzing American surnames in genealogy or census data.
 - **Refined Soundex** -  The refined soundex is a variation that is better for applications such as spell checking. It uses a mapping that aims to be more precise and does not truncate to 4 characters by default.
+- **Double Metaphone** - The metaphone series of algorithms apply "expert rules" based on inconsistencies in the English language in attempt to acheive greater precision (fewer results that are closer in phonetic sound).
 - ***More Under Development***
 
 
