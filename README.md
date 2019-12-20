@@ -20,3 +20,21 @@ A collection of phonetic algorithms for [Dart](https://dart.dev/) and [Flutter](
 ### _Work In Progress_
 
 _This project is a work in progress that is being developed because I need these algorithms for another project. I'll spend time implementing more phonetic algorithms depending on demand, need, or community interest._
+
+
+### _Other Implementations_
+
+_The [Wikipedia Phonetic Algorithm](https://en.wikipedia.org/wiki/Phonetic_algorithm) page provides a good basic background. There are several other libraries (written in other languages) that may be useful for reference to those interested in exploring various Phonetic Encoding algorithms for various purposes. They are also useful to review special cases in test data._
+
+- **Apache Commons Codes** is a **Java** library that includes many Phonetic algoritms
+   - https://commons.apache.org/proper/commons-codec/
+   - https://github.com/apache/commons-codec
+- **Abydos** is a **Python** library that includes many Phonetic algorithms
+   - https://abydos.readthedocs.io/en/latest/index.html
+   - https://github.com/chrislit/abydos/tree/master/abydos/phonetic
+- **Talisman** is a **Javascript** library that includes many Phonetic algorithms.
+   - https://yomguithereal.github.io/talisman/phonetics/
+   - https://github.com/Yomguithereal/talisman/tree/master/src/phonetics
+- **stringmetric** is a **Scala** library that includes many Phonetic algorithms.
+   - https://rockymadden.com/stringmetric/
+   - https://github.com/rockymadden/stringmetric/
