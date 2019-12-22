@@ -1,6 +1,6 @@
 /*
  * dart_phonetics is a collection of phonetics algorithms implemented in Dart.
- * Copyright (C) 2019 Raymond Cardillo (dba Cardillo's Creations)
+ * Copyright (c) 2019 Raymond Cardillo (dba Cardillo's Creations)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,66 +34,66 @@ void main() {
 
   group('Encoding Tests', () {
     test('test basic encoding', () {
-      final soundex = RefinedSoundex();
-      expectEncoding(soundex, 'testing', 'T6036084');
-      expectEncoding(soundex, 'TESTING', 'T6036084');
-      expectEncoding(soundex, 'The', 'T60');
-      expectEncoding(soundex, 'quick', 'Q503');
-      expectEncoding(soundex, 'brown', 'B1908');
-      expectEncoding(soundex, 'fox', 'F205');
-      expectEncoding(soundex, 'jumped', 'J408106');
-      expectEncoding(soundex, 'over', 'O0209');
-      expectEncoding(soundex, 'the', 'T60');
-      expectEncoding(soundex, 'lazy', 'L7050');
-      expectEncoding(soundex, 'dogs', 'D6043');
+      final encoder = RefinedSoundex();
+      expectEncoding(encoder, 'testing', 'T6036084');
+      expectEncoding(encoder, 'TESTING', 'T6036084');
+      expectEncoding(encoder, 'The', 'T60');
+      expectEncoding(encoder, 'quick', 'Q503');
+      expectEncoding(encoder, 'brown', 'B1908');
+      expectEncoding(encoder, 'fox', 'F205');
+      expectEncoding(encoder, 'jumped', 'J408106');
+      expectEncoding(encoder, 'over', 'O0209');
+      expectEncoding(encoder, 'the', 'T60');
+      expectEncoding(encoder, 'lazy', 'L7050');
+      expectEncoding(encoder, 'dogs', 'D6043');
     });
 
     test('test max length', () {
-      final soundex4 = RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping,
+      final encoder4 = RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping,
           maxLength: 4);
-      expectEncoding(soundex4, 'testing', 'T603');
-      expectEncoding(soundex4, 'The', 'T60');
-      expectEncoding(soundex4, 'quick', 'Q503');
-      expectEncoding(soundex4, 'brown', 'B190');
-      expectEncoding(soundex4, 'fox', 'F205');
-      expectEncoding(soundex4, 'jumped', 'J408');
-      expectEncoding(soundex4, 'over', 'O020');
-      expectEncoding(soundex4, 'the', 'T60');
-      expectEncoding(soundex4, 'lazy', 'L705');
-      expectEncoding(soundex4, 'dogs', 'D604');
+      expectEncoding(encoder4, 'testing', 'T603');
+      expectEncoding(encoder4, 'The', 'T60');
+      expectEncoding(encoder4, 'quick', 'Q503');
+      expectEncoding(encoder4, 'brown', 'B190');
+      expectEncoding(encoder4, 'fox', 'F205');
+      expectEncoding(encoder4, 'jumped', 'J408');
+      expectEncoding(encoder4, 'over', 'O020');
+      expectEncoding(encoder4, 'the', 'T60');
+      expectEncoding(encoder4, 'lazy', 'L705');
+      expectEncoding(encoder4, 'dogs', 'D604');
 
-      final soundex5 = RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping,
+      final encoder5 = RefinedSoundex.fromMapping(RefinedSoundex.defaultMapping,
           maxLength: 5);
-      expectEncoding(soundex5, 'testing', 'T6036');
-      expectEncoding(soundex5, 'The', 'T60');
-      expectEncoding(soundex5, 'quick', 'Q503');
-      expectEncoding(soundex5, 'brown', 'B1908');
-      expectEncoding(soundex5, 'fox', 'F205');
-      expectEncoding(soundex5, 'jumped', 'J4081');
-      expectEncoding(soundex5, 'over', 'O0209');
-      expectEncoding(soundex5, 'the', 'T60');
-      expectEncoding(soundex5, 'lazy', 'L7050');
-      expectEncoding(soundex5, 'dogs', 'D6043');
+      expectEncoding(encoder5, 'testing', 'T6036');
+      expectEncoding(encoder5, 'The', 'T60');
+      expectEncoding(encoder5, 'quick', 'Q503');
+      expectEncoding(encoder5, 'brown', 'B1908');
+      expectEncoding(encoder5, 'fox', 'F205');
+      expectEncoding(encoder5, 'jumped', 'J4081');
+      expectEncoding(encoder5, 'over', 'O0209');
+      expectEncoding(encoder5, 'the', 'T60');
+      expectEncoding(encoder5, 'lazy', 'L7050');
+      expectEncoding(encoder5, 'dogs', 'D6043');
 
-      final soundex20 = RefinedSoundex.fromMapping(
+      final encoder20 = RefinedSoundex.fromMapping(
           RefinedSoundex.defaultMapping,
           maxLength: 20);
-      expectEncoding(soundex20, 'testing', 'T6036084');
-      expectEncoding(soundex20, 'supercalifragilistic', 'S3010930702904070360');
+      expectEncoding(encoder20, 'testing', 'T6036084');
+      expectEncoding(encoder20, 'supercalifragilistic', 'S3010930702904070360');
     });
 
     test('test irregular characters', () {
-      final soundex = RefinedSoundex();
+      final encoder = RefinedSoundex();
 
       // test some strings with irregular characters
-      expectEncoding(soundex, '#@', null);
-      expectEncoding(soundex, '<test&ing>', 'T6036084');
-      expectEncoding(soundex, '\0#tes@ting!', 'T6036084');
-      expectEncoding(soundex, ' \t\n\r Washington \t\n\r ', 'W03084608');
+      expectEncoding(encoder, '#@', null);
+      expectEncoding(encoder, '<test&ing>', 'T6036084');
+      expectEncoding(encoder, '\0#tes@ting!', 'T6036084');
+      expectEncoding(encoder, ' \t\n\r Washington \t\n\r ', 'W03084608');
     });
 
     test('test apostrophes', () {
-      final soundex = RefinedSoundex();
+      final encoder = RefinedSoundex();
       final inputs = [
         "O'Brien",
         "OB'rien",
@@ -103,29 +103,29 @@ void main() {
         "OBrien'"
       ];
 
-      expectEncodings(soundex, inputs, 'O01908');
+      expectEncodings(encoder, inputs, 'O01908');
     });
 
     test('test special character cases', () {
-      final soundex = RefinedSoundex();
+      final encoder = RefinedSoundex();
 
       // Simple 'e' should work fine
-      expectEncoding(soundex, 'e', 'E0');
+      expectEncoding(encoder, 'e', 'E0');
 
       // Special characters are not mapped by the US_ENGLISH mapping.
-      expectEncoding(soundex, String.fromCharCode($Eacute), null);
-      expectEncoding(soundex, String.fromCharCode($eacute), null);
+      expectEncoding(encoder, String.fromCharCode($Eacute), null);
+      expectEncoding(encoder, String.fromCharCode($eacute), null);
 
       // Simple 'o' should work fine
-      expectEncoding(soundex, 'o', 'O0');
+      expectEncoding(encoder, 'o', 'O0');
 
       // Special characters are not mapped by the US_ENGLISH mapping.
-      expectEncoding(soundex, String.fromCharCode($Ouml), null);
-      expectEncoding(soundex, String.fromCharCode($ouml), null);
+      expectEncoding(encoder, String.fromCharCode($Ouml), null);
+      expectEncoding(encoder, String.fromCharCode($ouml), null);
     });
 
     test('test ntz examples', () {
-      final soundex = RefinedSoundex();
+      final encoder = RefinedSoundex();
 
       // testing examples from:
       // http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
@@ -136,7 +136,7 @@ void main() {
         'Braz',
         'Broz',
       ];
-      expectEncodings(soundex, inputs, 'B1905');
+      expectEncodings(encoder, inputs, 'B1905');
 
       inputs = [
         'Caren',
@@ -155,7 +155,7 @@ void main() {
         'Currum',
         'Curwen',
       ];
-      expectEncodings(soundex, inputs, 'C30908');
+      expectEncodings(encoder, inputs, 'C30908');
 
       inputs = [
         'Hairs',
@@ -165,7 +165,7 @@ void main() {
         'Heers',
         'Hiers',
       ];
-      expectEncodings(soundex, inputs, 'H093');
+      expectEncodings(encoder, inputs, 'H093');
 
       inputs = [
         'Lambard',
@@ -181,37 +181,60 @@ void main() {
         'Limbert',
         'Lombard',
       ];
-      expectEncodings(soundex, inputs, 'L7081096');
+      expectEncodings(encoder, inputs, 'L7081096');
 
       inputs = [
         'Nolton',
         'Noulton',
       ];
-      expectEncodings(soundex, inputs, 'N807608');
+      expectEncodings(encoder, inputs, 'N807608');
     });
+  });
 
+  group('Difference Tests', () {
     test('test similarity measure', () {
-      final soundex = RefinedSoundex();
+      final encoder = RefinedSoundex();
 
       // Edge cases
-      expect(0, PhoneticUtils.primaryDifference(soundex, null, null));
-      expect(0, PhoneticUtils.primaryDifference(soundex, '', ''));
-      expect(0, PhoneticUtils.primaryDifference(soundex, ' ', ' '));
+      expect(0, PhoneticUtils.primaryDifference(encoder, null, null));
+      expect(0, PhoneticUtils.primaryDifference(encoder, '', ''));
+      expect(0, PhoneticUtils.primaryDifference(encoder, ' ', ' '));
 
       // Normal cases
-      expect(6, PhoneticUtils.primaryDifference(soundex, 'Smith', 'Smythe'));
-      expect(3, PhoneticUtils.primaryDifference(soundex, 'Ann', 'Andrew'));
-      expect(1, PhoneticUtils.primaryDifference(soundex, 'Margaret', 'Andrew'));
-      expect(1, PhoneticUtils.primaryDifference(soundex, 'Janet', 'Margaret'));
+      expect(6, PhoneticUtils.primaryDifference(encoder, 'Smith', 'Smythe'));
+      expect(3, PhoneticUtils.primaryDifference(encoder, 'Ann', 'Andrew'));
+      expect(1, PhoneticUtils.primaryDifference(encoder, 'Margaret', 'Andrew'));
+      expect(1, PhoneticUtils.primaryDifference(encoder, 'Janet', 'Margaret'));
 
       // Special cases
-      expect(5, PhoneticUtils.primaryDifference(soundex, 'Green', 'Greene'));
+      expect(5, PhoneticUtils.primaryDifference(encoder, 'Green', 'Greene'));
       expect(1,
-          PhoneticUtils.primaryDifference(soundex, 'Blotchet-Halls', 'Greene'));
+          PhoneticUtils.primaryDifference(encoder, 'Blotchet-Halls', 'Greene'));
       expect(
-          8, PhoneticUtils.primaryDifference(soundex, 'Smithers', 'Smythers'));
+          8, PhoneticUtils.primaryDifference(encoder, 'Smithers', 'Smythers'));
       expect(
-          5, PhoneticUtils.primaryDifference(soundex, 'Anothers', 'Brothers'));
+          5, PhoneticUtils.primaryDifference(encoder, 'Anothers', 'Brothers'));
+    });
+  });
+
+  group('Matching Tests', () {
+    test('test homophones', () {
+      final encoder = Soundex();
+      expectEncodingEquals(encoder, 'Ray', 'Rae');
+      expectEncodingEquals(encoder, 'tolled', 'told');
+      expectEncodingEquals(encoder, 'brian', 'bryan');
+      expectEncodingEquals(encoder, 'poor', 'pour');
+      expectEncodingEquals(encoder, 'flour', 'flower');
+      expectEncodingEquals(encoder, 'brake', 'break');
+    });
+
+    test('test similar names', () {
+      final encoder = Soundex();
+      expectEncodingEquals(encoder, 'Smith', 'Schmidt');
+      expectEncodingEquals(encoder, 'Bartosz', 'Bartos');
+      expectEncodingEquals(encoder, 'Blansett', 'Blancett');
+      expectEncodingEquals(encoder, 'Hicks', 'Hix');
+      expectEncodingEquals(encoder, 'Shoemaker', 'Shumaker');
     });
   });
 }

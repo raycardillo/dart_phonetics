@@ -7,14 +7,15 @@
 
 A collection of phonetic algorithms for [Dart](https://dart.dev/) and [Flutter](https://flutter.dev/). These algorithms help find words or names that sound similar by generating an encoding that can be compared or indexed for fuzzy searching.
 
-----------------
+----------
+
 
 ## Algorithms Implemented
 
-- **American Soundex** - A highly configurable implementation of the Soundex algorithm. There are better algorithms available, but this algorithm is classic, and is required when analyzing American surnames in genealogy or census data.
+- **Soundex** - A highly configurable implementation of the Soundex algorithm. There are better algorithms available, but this algorithm is classic, and is required when analyzing American surnames in genealogy or census data.
 - **Refined Soundex** -  The refined soundex is a variation that is better for applications such as spell checking. It uses a mapping that aims to be more precise and does not truncate to 4 characters by default.
+- **NYSIIS** - An implementation of the New York State Identification and Intelligence System as documented by the USDA SRS system design report. The modified version of the algorithm is best suited for encoding names.
 - **Double Metaphone** - The metaphone series of algorithms apply "expert rules" based on inconsistencies in the English language in attempt to acheive greater precision (fewer results that are closer in phonetic sound).
-- ***More Under Development***
 
 
 ### _Work In Progress_
@@ -22,9 +23,18 @@ A collection of phonetic algorithms for [Dart](https://dart.dev/) and [Flutter](
 _This project is a work in progress that is being developed because I need these algorithms for another project. I'll spend time implementing more phonetic algorithms depending on demand, need, or community interest._
 
 
+### Sponsor Me
+
+Please consider [sponsoring me](https://github.com/sponsors/raycardillo) if you are using this library, need help, or if you want to discuss specific algorithms or need a special encoding algorithm implemented.
+
+
+<br></br>
+
+----------
+
 ### _Other Implementations_
 
-_The [Wikipedia Phonetic Algorithm](https://en.wikipedia.org/wiki/Phonetic_algorithm) page provides a good basic background. There are several other libraries (written in other languages) that may be useful for reference to those interested in exploring various Phonetic Encoding algorithms for various purposes. They are also useful to review special cases in test data._
+The [Wikipedia Phonetic Algorithm](https://en.wikipedia.org/wiki/Phonetic_algorithm) page provides a good basic background. There are several other libraries (written in other languages) that may be useful for reference to those interested in exploring various Phonetic Encoding algorithms for various purposes. These references are also useful because of the test cases they contain (which capture edge cases that are useful to analyze and compare).
 
 - **Apache Commons Codes** is a **Java** library that includes many Phonetic algoritms
    - https://commons.apache.org/proper/commons-codec/

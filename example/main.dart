@@ -19,6 +19,13 @@ void main() {
   final refinedSoundex = RefinedSoundex.defaultEncoder;
   _printResult(refinedSoundex, inputString);
 
+  final nysiisOriginal = Nysiis.originalEncoder;
+  _printResult(nysiisOriginal, inputString);
+
+  final nysiisModified =
+      Nysiis.withOptions(maxLength: null, enableModified: true);
+  _printResult(nysiisModified, inputString);
+
   final doubleMetaphone = DoubleMetaphone.withMaxLength(12);
   _printResult(doubleMetaphone, inputString);
 }

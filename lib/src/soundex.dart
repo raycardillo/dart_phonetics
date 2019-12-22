@@ -1,6 +1,6 @@
 /*
  * dart_phonetics is a collection of phonetics algorithms implemented in Dart.
- * Copyright (C) 2019 Raymond Cardillo (dba Cardillo's Creations)
+ * Copyright (c) 2019 Raymond Cardillo (dba Cardillo's Creations)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,6 +53,9 @@ import 'package:dart_phonetics/src/utils.dart';
 /// - http://creativyst.com/Doc/Articles/SoundEx1/SoundEx1.htm
 /// - https://west-penwith.org.uk/misc/soundex.htm
 class Soundex implements PhoneticEncoder {
+  /// Default encoding length to use.
+  static const int defaultMaxLength = 4;
+
   /// The character mapping to use when encoding. A value of [$nul] means
   /// ignore the input character and do not encode it (e.g., vowels).
   final Map<int, int> soundexMapping;
@@ -148,7 +151,7 @@ class Soundex implements PhoneticEncoder {
           bool hyphenatedPartsEnabled = true,
           bool ignoreHW = true,
           bool trackIgnored = true,
-          int maxLength = 4,
+          int maxLength = defaultMaxLength,
           int paddingChar = $0,
           bool paddingEnabled = true}) =>
       Soundex._internal(
@@ -187,7 +190,7 @@ class Soundex implements PhoneticEncoder {
   /// Returns `null` if the input is `null` or empty (after cleaning up).
   String _encode(String input) {
     // clean up the input and convert to uppercase
-    input = PhoneticUtils.clean(input, latin: false);
+    input = PhoneticUtils.clean(input, allowLatin: false);
     if (input == null) {
       return null;
     }
