@@ -1,6 +1,6 @@
 /*
  * dart_phonetics is a collection of phonetics algorithms implemented in Dart.
- * Copyright (C) 2019 Raymond Cardillo (dba Cardillo's Creations)
+ * Copyright (c) 2019 Raymond Cardillo (dba Cardillo's Creations)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,45 +23,46 @@ import 'package:dart_phonetics/src/utils.dart';
 /// Internal data class helper for writing to the [_primary] and [_alternate]
 /// metaphone values.
 class _DoubleMetaphoneEncoding {
+  /// Buffer used for writing primary encoding.
   final StringBuffer _primary = StringBuffer();
+
+  /// Buffer used for writing alternate encoding.
   final StringBuffer _alternate = StringBuffer();
+
+  /// Max length to encode (or `null` if no max length).
   final int _maxLength;
 
+  /// Internal constructor.
   _DoubleMetaphoneEncoding([this._maxLength]);
 
+  /// Append a [charCode] to the primary encoding.
+  void appendPrimary(final int charCode) {
+    if (_maxLength == null || _primary.length < _maxLength) {
+      _primary.writeCharCode(charCode);
+    }
+  }
+
+  /// Append a [charCode] to the alternate encoding.
+  void appendAlternate(final int charCode) {
+    if (_maxLength == null || _alternate.length < _maxLength) {
+      _alternate.writeCharCode(charCode);
+    }
+  }
+
+  /// Append the same [charCode] to both the primary and alternate encodings.
   void appendBoth(final int charCode) {
     appendPrimary(charCode);
     appendAlternate(charCode);
   }
 
+  /// Append a specific [primaryCharCode] and [alternateCharCode] to each
+  /// respective encoding.
   void appendEach(final int primaryCharCode, final int alternateCharCode) {
     appendPrimary(primaryCharCode);
     appendAlternate(alternateCharCode);
   }
 
-  void appendPrimary(final int charCode) {
-    if (_maxLength != null && _primary.length < _maxLength) {
-      _primary.writeCharCode(charCode);
-    }
-  }
-
-  void appendAlternate(final int charCode) {
-    if (_maxLength != null && _alternate.length < _maxLength) {
-      _alternate.writeCharCode(charCode);
-    }
-  }
-
-  void appendBothString(final String value) {
-    appendPrimaryString(value);
-    appendAlternateString(value);
-  }
-
-  void appendEachString(
-      final String primaryValue, final String alternateValue) {
-    appendPrimaryString(primaryValue);
-    appendAlternateString(alternateValue);
-  }
-
+  /// Append a [value] to the primary encoding.
   void appendPrimaryString(final String value) {
     final charsRemaining = _maxLength - _primary.length;
     if (value.length <= charsRemaining) {
@@ -71,6 +72,7 @@ class _DoubleMetaphoneEncoding {
     }
   }
 
+  /// Append a [value] to the alternate encoding.
   void appendAlternateString(final String value) {
     final charsRemaining = _maxLength - _alternate.length;
     if (value.length <= charsRemaining) {
@@ -80,14 +82,36 @@ class _DoubleMetaphoneEncoding {
     }
   }
 
-  bool isMaxedOut() {
-    return _primary.length >= _maxLength && _alternate.length >= _maxLength;
+  /// Append the same [value] to both the primary and alternate encodings.
+  void appendBothString(final String value) {
+    appendPrimaryString(value);
+    appendAlternateString(value);
   }
 
+  /// Append a specific [primaryValue] and [alternateValue] to each
+  /// respective encoding.
+  void appendEachString(
+      final String primaryValue, final String alternateValue) {
+    appendPrimaryString(primaryValue);
+    appendAlternateString(alternateValue);
+  }
+
+  /// Returns `true` if the encoding is maxed out (both encodings are at the
+  /// max length), `false` otherwise (or if [_maxLength] is `null`).
+  bool isMaxedOut() {
+    return _maxLength != null &&
+        _primary.length >= _maxLength &&
+        _alternate.length >= _maxLength;
+  }
+
+  /// Returns the string value of the primary encoding. This renders the
+  /// buffer so it should only be called once if possible.
   String get primary {
     return _primary.toString();
   }
 
+  /// Returns the string value of the primary encoding. This renders the
+  /// buffer so it should only be called once if possible.
   String get alternate {
     return _alternate.toString();
   }
@@ -220,23 +244,6 @@ class DoubleMetaphone implements PhoneticEncoder {
     return value.startsWith(_SILENT_START_REGEXP);
   }
 
-  /// Returns the character from [value] at [index] or $nul if the index is
-  /// out of range.
-  static int _codeUnitAt(final String value, final int index) {
-    return (index < 0 || index >= value.length)
-        ? $nul
-        : value.codeUnitAt(index);
-  }
-
-  /// Returns `true` if the character from [value] at [index] matches
-  /// [pattern] or `false` (including if [index] is if out of range).
-  static bool _startsWith(final String value, final Pattern pattern,
-      [final int index = 0]) {
-    return (index < 0 || index >= value.length)
-        ? false
-        : value.startsWith(pattern, index);
-  }
-
   //#endregion
 
   /// Per specification, the encoding always contains two values. If there is
@@ -263,7 +270,7 @@ class DoubleMetaphone implements PhoneticEncoder {
       // skip the first character if it's a silent start
       iterator.moveNext();
       index++;
-    } else if (PhoneticUtils.isVowel(_codeUnitAt(input, 0))) {
+    } else if (PhoneticUtils.isVowelAt(input, 0)) {
       encoding.appendBoth($A);
       iterator.moveNext();
       index++;
@@ -276,7 +283,7 @@ class DoubleMetaphone implements PhoneticEncoder {
       switch (currentChar) {
         case $B:
           encoding.appendBoth($P);
-          advance = _codeUnitAt(input, index + 1) == $B ? 2 : 1;
+          advance = PhoneticUtils.codeUnitAt(input, index + 1) == $B ? 2 : 1;
           break;
         case $Ccedil:
           encoding.appendBoth($S);
@@ -289,7 +296,7 @@ class DoubleMetaphone implements PhoneticEncoder {
           break;
         case $F:
           encoding.appendBoth($F);
-          advance = _codeUnitAt(input, index + 1) == $F ? 2 : 1;
+          advance = PhoneticUtils.codeUnitAt(input, index + 1) == $F ? 2 : 1;
           break;
         case $G:
           advance = _encodeG(encoding, input, index, slavoGermanic);
@@ -302,7 +309,7 @@ class DoubleMetaphone implements PhoneticEncoder {
           break;
         case $K:
           encoding.appendBoth($K);
-          advance = _codeUnitAt(input, index + 1) == $K ? 2 : 1;
+          advance = PhoneticUtils.codeUnitAt(input, index + 1) == $K ? 2 : 1;
           break;
         case $L:
           advance = _encodeL(encoding, input, index);
@@ -312,7 +319,7 @@ class DoubleMetaphone implements PhoneticEncoder {
           break;
         case $N:
           encoding.appendBoth($N);
-          advance = _codeUnitAt(input, index + 1) == $N ? 2 : 1;
+          advance = PhoneticUtils.codeUnitAt(input, index + 1) == $N ? 2 : 1;
           break;
         case $Ntilde:
           encoding.appendBoth($N);
@@ -322,7 +329,7 @@ class DoubleMetaphone implements PhoneticEncoder {
           break;
         case $Q:
           encoding.appendBoth($K);
-          advance = _codeUnitAt(input, index + 1) == $Q ? 2 : 1;
+          advance = PhoneticUtils.codeUnitAt(input, index + 1) == $Q ? 2 : 1;
           break;
         case $R:
           advance = _encodeR(encoding, input, index, slavoGermanic);
@@ -335,7 +342,7 @@ class DoubleMetaphone implements PhoneticEncoder {
           break;
         case $V:
           encoding.appendBoth($F);
-          advance = _codeUnitAt(input, index + 1) == $V ? 2 : 1;
+          advance = PhoneticUtils.codeUnitAt(input, index + 1) == $V ? 2 : 1;
           break;
         case $W:
           advance = _encodeW(encoding, input, index);
@@ -371,30 +378,30 @@ class DoubleMetaphone implements PhoneticEncoder {
     if (_isSpecialC(value, index)) {
       encoding.appendBoth($K);
       return 2;
-    } else if (index == 0 && _startsWith(value, 'CAESAR', index)) {
+    } else if (index == 0 && PhoneticUtils.startsWith(value, 'CAESAR', index)) {
       encoding.appendBoth($S);
       return 2;
-    } else if (_startsWith(value, 'CH', index)) {
+    } else if (PhoneticUtils.startsWith(value, 'CH', index)) {
       return _encodeCH(encoding, value, index);
-    } else if (_startsWith(value, 'CZ', index) &&
-        (index < 2 || !_startsWith(value, 'WI', index - 2))) {
+    } else if (PhoneticUtils.startsWith(value, 'CZ', index) &&
+        (index < 2 || !PhoneticUtils.startsWith(value, 'WI', index - 2))) {
       //-- "Czerny" but not "WICZ" --//
       encoding.appendEach($S, $X);
       return 2;
-    } else if (_startsWith(value, 'CIA', index + 1)) {
+    } else if (PhoneticUtils.startsWith(value, 'CIA', index + 1)) {
       //-- "focaccia" --//
       encoding.appendBoth($X);
       return 3;
-    } else if (_startsWith(value, 'CC', index) &&
-        !(index == 1 && _codeUnitAt(value, 0) == $M)) {
+    } else if (PhoneticUtils.startsWith(value, 'CC', index) &&
+        !(index == 1 && PhoneticUtils.codeUnitAt(value, 0) == $M)) {
       //-- double "cc" but not "McClelland" --//
       return _encodeCC(encoding, value, index);
-    } else if (_startsWith(value, _CK_CG_CQ_REGEXP, index)) {
+    } else if (PhoneticUtils.startsWith(value, _CK_CG_CQ_REGEXP, index)) {
       encoding.appendBoth($K);
       return 2;
-    } else if (_startsWith(value, _CI_CE_CY_REGEXP, index)) {
+    } else if (PhoneticUtils.startsWith(value, _CI_CE_CY_REGEXP, index)) {
       //-- Italian vs. English --//
-      if (_startsWith(value, _CIO_CIE_CIA_REGEXP, index)) {
+      if (PhoneticUtils.startsWith(value, _CIO_CIE_CIA_REGEXP, index)) {
         encoding.appendEach($S, $X);
       } else {
         encoding.appendBoth($S);
@@ -403,11 +410,11 @@ class DoubleMetaphone implements PhoneticEncoder {
     }
 
     encoding.appendBoth($K);
-    if (_startsWith(value, _sC_sQ_sG_REGEXP, index + 1)) {
+    if (PhoneticUtils.startsWith(value, _sC_sQ_sG_REGEXP, index + 1)) {
       //-- Mac Caffrey, Mac Gregor --//
       return 3;
-    } else if (_C_K_Q.contains(_codeUnitAt(value, index + 1)) &&
-        !_startsWith(value, _CE_CI_REGEXP, index + 1)) {
+    } else if (_C_K_Q.contains(PhoneticUtils.codeUnitAt(value, index + 1)) &&
+        !PhoneticUtils.startsWith(value, _CE_CI_REGEXP, index + 1)) {
       return 2;
     }
 
@@ -415,29 +422,30 @@ class DoubleMetaphone implements PhoneticEncoder {
   }
 
   static bool _isSpecialC(final String value, final int index) {
-    if (_startsWith(value, 'CHIA', index)) {
+    if (PhoneticUtils.startsWith(value, 'CHIA', index)) {
       return true;
     } else if (index <= 1) {
       return false;
-    } else if (PhoneticUtils.isVowel(_codeUnitAt(value, index - 2))) {
+    } else if (PhoneticUtils.isVowelAt(value, index - 2)) {
       return false;
-    } else if (!_startsWith(value, 'ACH', index - 1)) {
+    } else if (!PhoneticUtils.startsWith(value, 'ACH', index - 1)) {
       return false;
     } else {
-      final char = _codeUnitAt(value, index + 2);
+      final char = PhoneticUtils.codeUnitAt(value, index + 2);
       return (char != $I && char != $E) ||
           ((index >= 2) &&
-              _startsWith(value, _BACHER_MACHER_REGEXP, index - 2));
+              PhoneticUtils.startsWith(
+                  value, _BACHER_MACHER_REGEXP, index - 2));
     }
   }
 
   static int _encodeCC(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_E_I_H.contains(_codeUnitAt(value, index + 2)) &&
-        !_startsWith(value, 'HU', index + 2)) {
+    if (_E_I_H.contains(PhoneticUtils.codeUnitAt(value, index + 2)) &&
+        !PhoneticUtils.startsWith(value, 'HU', index + 2)) {
       //-- "bellocchio" but not "bacchus" --//
-      if ((index == 1 && _codeUnitAt(value, index - 1) == $A) ||
-          _startsWith(value, _UCCEE_UCCES_REGEXP, index - 1)) {
+      if ((index == 1 && PhoneticUtils.codeUnitAt(value, index - 1) == $A) ||
+          PhoneticUtils.startsWith(value, _UCCEE_UCCES_REGEXP, index - 1)) {
         //-- "accident", "accede", "succeed" --//
         encoding.appendBothString('KS');
       } else {
@@ -454,7 +462,7 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeCH(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (index > 0 && _startsWith(value, 'CHAE', index)) {
+    if (index > 0 && PhoneticUtils.startsWith(value, 'CHAE', index)) {
       // Michael
       encoding.appendEach($K, $X);
       return 2;
@@ -469,7 +477,7 @@ class DoubleMetaphone implements PhoneticEncoder {
     }
 
     if (index > 0) {
-      if (_startsWith(value, 'MC', 0)) {
+      if (PhoneticUtils.startsWith(value, 'MC', 0)) {
         encoding.appendBoth($K);
       } else {
         encoding.appendEach($X, $K);
@@ -484,10 +492,11 @@ class DoubleMetaphone implements PhoneticEncoder {
   static bool _isSpecialCH1(final String value, final int index) {
     if (index != 0) {
       return false;
-    } else if (!_startsWith(value, _HARAC_HARIS_REGEXP, index + 1) &&
-        !_startsWith(value, _HOR_HYM_HIA_HEM_REGEXP, index + 1)) {
+    } else if (!PhoneticUtils.startsWith(
+            value, _HARAC_HARIS_REGEXP, index + 1) &&
+        !PhoneticUtils.startsWith(value, _HOR_HYM_HIA_HEM_REGEXP, index + 1)) {
       return false;
-    } else if (_startsWith(value, 'CHORE', 0)) {
+    } else if (PhoneticUtils.startsWith(value, 'CHORE', 0)) {
       return false;
     } else {
       return true;
@@ -495,20 +504,24 @@ class DoubleMetaphone implements PhoneticEncoder {
   }
 
   static bool _isSpecialCH2(final String value, final int index) {
-    return ((_startsWith(value, _VANs_VONs_REGEXP, 0) ||
-            _startsWith(value, 'SCH', 0)) ||
-        _startsWith(value, _ORCHES_ARCHIT_ORCHID_REGEXP, index - 2) ||
-        _T_S.contains(_codeUnitAt(value, index + 2)) ||
-        ((index == 0 || _A_O_U_E.contains(_codeUnitAt(value, index - 1))) &&
-            (_L_R_N_M_B_H_F_V_W_SPACE.contains(_codeUnitAt(value, index + 2)) ||
+    return ((PhoneticUtils.startsWith(value, _VANs_VONs_REGEXP, 0) ||
+            PhoneticUtils.startsWith(value, 'SCH', 0)) ||
+        PhoneticUtils.startsWith(
+            value, _ORCHES_ARCHIT_ORCHID_REGEXP, index - 2) ||
+        _T_S.contains(PhoneticUtils.codeUnitAt(value, index + 2)) ||
+        ((index == 0 ||
+                _A_O_U_E
+                    .contains(PhoneticUtils.codeUnitAt(value, index - 1))) &&
+            (_L_R_N_M_B_H_F_V_W_SPACE
+                    .contains(PhoneticUtils.codeUnitAt(value, index + 2)) ||
                 index + 1 == value.length - 1)));
   }
 
   static int _encodeD(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_startsWith(value, 'DG', index)) {
+    if (PhoneticUtils.startsWith(value, 'DG', index)) {
       //-- "Edge" --//
-      if (_E_I_Y.contains(_codeUnitAt(value, index + 2))) {
+      if (_E_I_Y.contains(PhoneticUtils.codeUnitAt(value, index + 2))) {
         encoding.appendBoth($J);
         return 3;
         //-- "Edgar" --//
@@ -516,7 +529,7 @@ class DoubleMetaphone implements PhoneticEncoder {
         encoding.appendBothString('TK');
         return 2;
       }
-    } else if (_startsWith(value, _DT_DD_REGEXP, index)) {
+    } else if (PhoneticUtils.startsWith(value, _DT_DD_REGEXP, index)) {
       encoding.appendBoth($T);
       return 2;
     }
@@ -527,15 +540,13 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeG(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index, final bool slavoGermanic) {
-    final nextChar = _codeUnitAt(value, index + 1);
+    final nextChar = PhoneticUtils.codeUnitAt(value, index + 1);
     if (nextChar == $H) {
       return _encodeGH(encoding, value, index);
     } else if (nextChar == $N) {
-      if (index == 1 &&
-          PhoneticUtils.isVowel(_codeUnitAt(value, 0)) &&
-          !slavoGermanic) {
+      if (index == 1 && PhoneticUtils.isVowelAt(value, 0) && !slavoGermanic) {
         encoding.appendEachString('KN', 'N');
-      } else if (!_startsWith(value, 'EY', index + 2) &&
+      } else if (!PhoneticUtils.startsWith(value, 'EY', index + 2) &&
           nextChar != $Y &&
           !slavoGermanic) {
         encoding.appendEachString('N', 'KN');
@@ -543,32 +554,34 @@ class DoubleMetaphone implements PhoneticEncoder {
         encoding.appendBothString('KN');
       }
       return 2;
-    } else if (_startsWith(value, 'LI', index + 1) && !slavoGermanic) {
+    } else if (PhoneticUtils.startsWith(value, 'LI', index + 1) &&
+        !slavoGermanic) {
       encoding.appendEachString('KL', 'L');
       return 2;
     } else if (index == 0 &&
         (nextChar == $Y ||
-            _startsWith(
+            PhoneticUtils.startsWith(
                 value, _ES_EP_EB_EL_EY_IB_IL_IN_IE_EI_ER_REGEXP, index + 1))) {
       //-- -ges-, -gep-, -gel-, -gie- at beginning --//
       encoding.appendEach($K, $J);
       return 2;
-    } else if ((_startsWith(value, 'ER', index + 1) || nextChar == $Y) &&
-        !_startsWith(value, _DANGER_RANGER_MANGER_REGEXP, 0) &&
-        !_E_I.contains(_codeUnitAt(value, index - 1)) &&
-        !_startsWith(value, _RGY_OGY_REGEXP, index - 1)) {
+    } else if ((PhoneticUtils.startsWith(value, 'ER', index + 1) ||
+            nextChar == $Y) &&
+        !PhoneticUtils.startsWith(value, _DANGER_RANGER_MANGER_REGEXP, 0) &&
+        !_E_I.contains(PhoneticUtils.codeUnitAt(value, index - 1)) &&
+        !PhoneticUtils.startsWith(value, _RGY_OGY_REGEXP, index - 1)) {
       //-- -ger-, -gy- --//
       encoding.appendEach($K, $J);
       return 2;
-    } else if (_E_I_Y.contains(_codeUnitAt(value, index + 1)) ||
-        _startsWith(value, _AGGI_OGGI_REGEXP, index - 1)) {
+    } else if (_E_I_Y.contains(PhoneticUtils.codeUnitAt(value, index + 1)) ||
+        PhoneticUtils.startsWith(value, _AGGI_OGGI_REGEXP, index - 1)) {
       //-- Italian "biaggi" --//
-      if (_startsWith(value, _VANs_VONs_REGEXP, 0) ||
-          _startsWith(value, 'SCH', 0) ||
-          _startsWith(value, 'ET', index + 1)) {
+      if (PhoneticUtils.startsWith(value, _VANs_VONs_REGEXP, 0) ||
+          PhoneticUtils.startsWith(value, 'SCH', 0) ||
+          PhoneticUtils.startsWith(value, 'ET', index + 1)) {
         //-- obvious germanic --//
         encoding.appendBoth($K);
-      } else if (_startsWith(value, 'IER', index + 1)) {
+      } else if (PhoneticUtils.startsWith(value, 'IER', index + 1)) {
         encoding.appendBoth($J);
       } else {
         encoding.appendEach($J, $K);
@@ -585,27 +598,30 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeGH(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    final prevChar = _codeUnitAt(value, index - 1);
+    final prevChar = PhoneticUtils.codeUnitAt(value, index - 1);
     if (index > 0 && !PhoneticUtils.isVowel(prevChar)) {
       encoding.appendBoth($K);
       return 2;
     } else if (index == 0) {
-      if (_codeUnitAt(value, index + 2) == $I) {
+      if (PhoneticUtils.codeUnitAt(value, index + 2) == $I) {
         encoding.appendBoth($J);
       } else {
         encoding.appendBoth($K);
       }
       return 2;
-    } else if ((index > 1 && _B_D_H.contains(_codeUnitAt(value, index - 2))) ||
-        (index > 2 && _B_D_H.contains(_codeUnitAt(value, index - 3))) ||
-        (index > 3 && _B_H.contains(_codeUnitAt(value, index - 4)))) {
+    } else if ((index > 1 &&
+            _B_D_H.contains(PhoneticUtils.codeUnitAt(value, index - 2))) ||
+        (index > 2 &&
+            _B_D_H.contains(PhoneticUtils.codeUnitAt(value, index - 3))) ||
+        (index > 3 &&
+            _B_H.contains(PhoneticUtils.codeUnitAt(value, index - 4)))) {
       //-- Parker's rule (with some further refinements) - "hugh"
       return 2;
     }
 
     if (index > 2 &&
         prevChar == $U &&
-        _C_G_L_R_T.contains(_codeUnitAt(value, index - 3))) {
+        _C_G_L_R_T.contains(PhoneticUtils.codeUnitAt(value, index - 3))) {
       //-- "laugh", "McLaughlin", "cough", "gough", "rough", "tough"
       encoding.appendBoth($F);
     } else if (index > 0 && prevChar != $I) {
@@ -618,8 +634,8 @@ class DoubleMetaphone implements PhoneticEncoder {
   static int _encodeH(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
     //-- only keep if first & before vowel or between 2 vowels --//
-    if ((index == 0 || PhoneticUtils.isVowel(_codeUnitAt(value, index - 1))) &&
-        PhoneticUtils.isVowel(_codeUnitAt(value, index + 1))) {
+    if ((index == 0 || PhoneticUtils.isVowelAt(value, index - 1)) &&
+        PhoneticUtils.isVowelAt(value, index + 1)) {
       encoding.appendBoth($H);
       return 2;
       //-- also takes car of "HH" --//
@@ -630,30 +646,33 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeJ(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index, bool slavoGermanic) {
-    if (_startsWith(value, 'JOSE', index) || _startsWith(value, 'SAN ')) {
+    if (PhoneticUtils.startsWith(value, 'JOSE', index) ||
+        PhoneticUtils.startsWith(value, 'SAN ')) {
       //-- obvious Spanish, "Jose", "San Jacinto" --//
-      if ((index == 0 && (_codeUnitAt(value, index + 4) == $space) ||
+      if ((index == 0 &&
+                  (PhoneticUtils.codeUnitAt(value, index + 4) == $space) ||
               value.length == 4) ||
-          _startsWith(value, 'SAN ')) {
+          PhoneticUtils.startsWith(value, 'SAN ')) {
         encoding.appendBoth($H);
       } else {
         encoding.appendEach($J, $H);
       }
     } else {
-      if (index == 0 && !_startsWith(value, 'JOSE', index)) {
+      if (index == 0 && !PhoneticUtils.startsWith(value, 'JOSE', index)) {
         encoding.appendEach($J, $A);
-      } else if (PhoneticUtils.isVowel(_codeUnitAt(value, index - 1)) &&
+      } else if (PhoneticUtils.isVowelAt(value, index - 1) &&
           !slavoGermanic &&
-          _A_O.contains(_codeUnitAt(value, index + 1))) {
+          _A_O.contains(PhoneticUtils.codeUnitAt(value, index + 1))) {
         encoding.appendEach($J, $H);
       } else if (index == value.length - 1) {
         encoding.appendPrimary($J);
-      } else if (!_L_T_K_S_N_M_B_Z.contains(_codeUnitAt(value, index + 1)) &&
-          !_S_K_L.contains(_codeUnitAt(value, index - 1))) {
+      } else if (!_L_T_K_S_N_M_B_Z
+              .contains(PhoneticUtils.codeUnitAt(value, index + 1)) &&
+          !_S_K_L.contains(PhoneticUtils.codeUnitAt(value, index - 1))) {
         encoding.appendBoth($J);
       }
 
-      if (_codeUnitAt(value, index + 1) == $J) {
+      if (PhoneticUtils.codeUnitAt(value, index + 1) == $J) {
         return 2;
       }
     }
@@ -663,7 +682,7 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeL(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_codeUnitAt(value, index + 1) == $L) {
+    if (PhoneticUtils.codeUnitAt(value, index + 1) == $L) {
       if (_isSpecialL(value, index)) {
         encoding.appendPrimary($L);
       } else {
@@ -678,11 +697,12 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static bool _isSpecialL(final String value, final int index) {
     if (index == value.length - 3 &&
-        _startsWith(value, _ILLO_ILLA_ALLE_REGEXP, index - 1)) {
+        PhoneticUtils.startsWith(value, _ILLO_ILLA_ALLE_REGEXP, index - 1)) {
       return true;
-    } else if ((_startsWith(value, _AS_OS_REGEXP, value.length - 2) ||
+    } else if ((PhoneticUtils.startsWith(
+                value, _AS_OS_REGEXP, value.length - 2) ||
             _A_O.contains(value.length - 1)) &&
-        _startsWith(value, 'ALLE', index - 1)) {
+        PhoneticUtils.startsWith(value, 'ALLE', index - 1)) {
       return true;
     } else {
       return false;
@@ -693,13 +713,13 @@ class DoubleMetaphone implements PhoneticEncoder {
       final String value, final int index) {
     encoding.appendBoth($M);
 
-    if (_codeUnitAt(value, index + 1) == $M) {
+    if (PhoneticUtils.codeUnitAt(value, index + 1) == $M) {
       return 2;
     }
 
-    if (_startsWith(value, 'UMB', index - 1) &&
+    if (PhoneticUtils.startsWith(value, 'UMB', index - 1) &&
         ((index + 1) == value.length - 1 ||
-            _startsWith(value, 'ER', index + 2))) {
+            PhoneticUtils.startsWith(value, 'ER', index + 2))) {
       return 2;
     }
 
@@ -708,47 +728,48 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeP(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_codeUnitAt(value, index + 1) == $H) {
+    if (PhoneticUtils.codeUnitAt(value, index + 1) == $H) {
       encoding.appendBoth($F);
       return 2;
     }
 
     encoding.appendBoth($P);
-    return _P_B.contains(_codeUnitAt(value, index + 1)) ? 2 : 1;
+    return _P_B.contains(PhoneticUtils.codeUnitAt(value, index + 1)) ? 2 : 1;
   }
 
   static int _encodeR(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index, bool slavoGermanic) {
     if (index == value.length - 1 &&
         !slavoGermanic &&
-        _startsWith(value, 'IE', index - 2) &&
-        !_startsWith(value, _ME_MA_REGEXP, index - 4)) {
+        PhoneticUtils.startsWith(value, 'IE', index - 2) &&
+        !PhoneticUtils.startsWith(value, _ME_MA_REGEXP, index - 4)) {
       encoding.appendAlternate($R);
     } else {
       encoding.appendBoth($R);
     }
 
-    return _codeUnitAt(value, index + 1) == $R ? 2 : 1;
+    return PhoneticUtils.codeUnitAt(value, index + 1) == $R ? 2 : 1;
   }
 
   static int _encodeS(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index, bool slavoGermanic) {
-    if (_startsWith(value, _ISL_YSL_REGEXP, index - 1)) {
+    if (PhoneticUtils.startsWith(value, _ISL_YSL_REGEXP, index - 1)) {
       //-- special cases "island", "isle", "carlisle", "carlysle" --//
       return 1;
-    } else if (index == 0 && _startsWith(value, 'SUGAR', index)) {
+    } else if (index == 0 && PhoneticUtils.startsWith(value, 'SUGAR', index)) {
       //-- special case "sugar-" --//
       encoding.appendEach($X, $S);
       return 1;
-    } else if (_startsWith(value, 'SH', index)) {
-      if (_startsWith(value, _HEIM_HOEK_HOLM_HOLZ_REGEXP, index + 1)) {
+    } else if (PhoneticUtils.startsWith(value, 'SH', index)) {
+      if (PhoneticUtils.startsWith(
+          value, _HEIM_HOEK_HOLM_HOLZ_REGEXP, index + 1)) {
         //-- germanic --//
         encoding.appendBoth($S);
       } else {
         encoding.appendBoth($X);
       }
       return 2;
-    } else if (_startsWith(value, _SIO_SIA_SIAN_REGEXP, index)) {
+    } else if (PhoneticUtils.startsWith(value, _SIO_SIA_SIAN_REGEXP, index)) {
       //-- Italian and Armenian --//
       if (slavoGermanic) {
         encoding.appendBoth($S);
@@ -756,42 +777,44 @@ class DoubleMetaphone implements PhoneticEncoder {
         encoding.appendEach($S, $X);
       }
       return 3;
-    } else if ((index == 0 && _M_N_L_W.contains(_codeUnitAt(value, 1))) ||
-        _codeUnitAt(value, index + 1) == $Z) {
+    } else if ((index == 0 &&
+            _M_N_L_W.contains(PhoneticUtils.codeUnitAt(value, 1))) ||
+        PhoneticUtils.codeUnitAt(value, index + 1) == $Z) {
       //-- german & anglicisations, e.g. "smith" match "schmidt" //
       // "snider" match "schneider" --//
       //-- also, -sz- in slavic language although in hungarian it //
       //   is pronounced "s" --//
       encoding.appendEach($S, $X);
-      return (_codeUnitAt(value, index + 1) == $Z) ? 2 : 1;
-    } else if (_startsWith(value, 'SC', index)) {
+      return (PhoneticUtils.codeUnitAt(value, index + 1) == $Z) ? 2 : 1;
+    } else if (PhoneticUtils.startsWith(value, 'SC', index)) {
       return _encodeSC(encoding, value, index);
     }
 
     if ((index == value.length - 1) &&
-        _startsWith(value, _AI_OI_REGEXP, index - 2)) {
+        PhoneticUtils.startsWith(value, _AI_OI_REGEXP, index - 2)) {
       //-- french e.g. "resnais", "artois" --//
       encoding.appendAlternate($S);
     } else {
       encoding.appendBoth($S);
     }
 
-    return _S_Z.contains(_codeUnitAt(value, index + 1)) ? 2 : 1;
+    return _S_Z.contains(PhoneticUtils.codeUnitAt(value, index + 1)) ? 2 : 1;
   }
 
   static int _encodeSC(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_codeUnitAt(value, index + 2) == $H) {
+    if (PhoneticUtils.codeUnitAt(value, index + 2) == $H) {
       //-- Schlesinger's rule --//
-      final hasEREN = _startsWith(value, _ER_EN_REGEXP, index + 3);
+      final hasEREN = PhoneticUtils.startsWith(value, _ER_EN_REGEXP, index + 3);
       if (hasEREN) {
         //-- "schermerhorn", "schenker" --//
         encoding.appendEachString('X', 'SK');
-      } else if (_startsWith(value, _OO_UY_ED_EM_REGEXP, index + 3)) {
+      } else if (PhoneticUtils.startsWith(
+          value, _OO_UY_ED_EM_REGEXP, index + 3)) {
         encoding.appendBothString('SK');
       } else {
         if (index == 0) {
-          final charCode3 = _codeUnitAt(value, 3);
+          final charCode3 = PhoneticUtils.codeUnitAt(value, 3);
           if (!PhoneticUtils.isVowel(charCode3) && charCode3 != $W) {
             encoding.appendEach($X, $S);
           } else {
@@ -801,7 +824,7 @@ class DoubleMetaphone implements PhoneticEncoder {
           encoding.appendBoth($X);
         }
       }
-    } else if (_E_I_Y.contains(_codeUnitAt(value, index + 2))) {
+    } else if (_E_I_Y.contains(PhoneticUtils.codeUnitAt(value, index + 2))) {
       encoding.appendBoth($S);
     } else {
       encoding.appendBothString('SK');
@@ -812,18 +835,18 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   static int _encodeT(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_startsWith(value, 'TION', index)) {
+    if (PhoneticUtils.startsWith(value, 'TION', index)) {
       encoding.appendBoth($X);
       return 3;
-    } else if (_startsWith(value, _TIA_TCH_REGEXP, index)) {
+    } else if (PhoneticUtils.startsWith(value, _TIA_TCH_REGEXP, index)) {
       encoding.appendBoth($X);
       return 3;
-    } else if (_startsWith(value, 'TH', index) ||
-        _startsWith(value, 'TTH', index)) {
-      if (_startsWith(value, _OM_AM_REGEXP, index + 2) ||
+    } else if (PhoneticUtils.startsWith(value, 'TH', index) ||
+        PhoneticUtils.startsWith(value, 'TTH', index)) {
+      if (PhoneticUtils.startsWith(value, _OM_AM_REGEXP, index + 2) ||
           //-- special case "thomas", "thames" or germanic --//
-          _startsWith(value, _VANs_VONs_REGEXP, 0) ||
-          _startsWith(value, 'SCH', 0)) {
+          PhoneticUtils.startsWith(value, _VANs_VONs_REGEXP, 0) ||
+          PhoneticUtils.startsWith(value, 'SCH', 0)) {
         encoding.appendBoth($T);
       } else {
         encoding.appendEach($0, $T);
@@ -832,31 +855,32 @@ class DoubleMetaphone implements PhoneticEncoder {
     }
 
     encoding.appendBoth($T);
-    return _T_D.contains(_codeUnitAt(value, index + 1)) ? 2 : 1;
+    return _T_D.contains(PhoneticUtils.codeUnitAt(value, index + 1)) ? 2 : 1;
   }
 
   static int _encodeW(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index) {
-    if (_startsWith(value, 'WR', index)) {
+    if (PhoneticUtils.startsWith(value, 'WR', index)) {
       //-- can also be in middle of word --//
       encoding.appendBoth($R);
       return 2;
     } else {
       if (index == 0) {
-        if (PhoneticUtils.isVowel(_codeUnitAt(value, index + 1))) {
+        if (PhoneticUtils.isVowelAt(value, index + 1)) {
           //-- Wasserman should match Vasserman --//
           encoding.appendEach($A, $F);
-        } else if (_startsWith(value, 'WH', index)) {
+        } else if (PhoneticUtils.startsWith(value, 'WH', index)) {
           //-- need Uomo to match Womo --//
           encoding.appendBoth($A);
         }
       } else if ((index == value.length - 1 &&
-              PhoneticUtils.isVowel(_codeUnitAt(value, index - 1))) ||
-          _startsWith(value, _EWSKI_EWSKY_OWSKI_OWSKY_REGEXP, index - 1) ||
-          _startsWith(value, 'SCH', 0)) {
+              PhoneticUtils.isVowelAt(value, index - 1)) ||
+          PhoneticUtils.startsWith(
+              value, _EWSKI_EWSKY_OWSKI_OWSKY_REGEXP, index - 1) ||
+          PhoneticUtils.startsWith(value, 'SCH', 0)) {
         //-- Arnow should match Arnoff --//
         encoding.appendAlternate($F);
-      } else if (_startsWith(value, _WICZ_WITZ_REGEXP, index)) {
+      } else if (PhoneticUtils.startsWith(value, _WICZ_WITZ_REGEXP, index)) {
         //-- Polish e.g. "filipowicz" --//
         encoding.appendEachString('TS', 'FX');
         return 4;
@@ -873,27 +897,28 @@ class DoubleMetaphone implements PhoneticEncoder {
       return 1;
     } else {
       if (!((index == value.length - 1) &&
-          (_startsWith(value, _IAU_EAU_REGEXP, index - 3) ||
-              _startsWith(value, _AU_OU_REGEXP, index - 2)))) {
+          (PhoneticUtils.startsWith(value, _IAU_EAU_REGEXP, index - 3) ||
+              PhoneticUtils.startsWith(value, _AU_OU_REGEXP, index - 2)))) {
         //-- French e.g. breaux --//
         encoding.appendBothString('KS');
       }
     }
 
-    return _C_X.contains(_codeUnitAt(value, index + 1)) ? 2 : 1;
+    return _C_X.contains(PhoneticUtils.codeUnitAt(value, index + 1)) ? 2 : 1;
   }
 
   static int _encodeZ(final _DoubleMetaphoneEncoding encoding,
       final String value, final int index, bool slavoGermanic) {
-    final nextChar = _codeUnitAt(value, index + 1);
+    final nextChar = PhoneticUtils.codeUnitAt(value, index + 1);
     if (nextChar == $H) {
       //-- Chinese pinyin e.g. "zhao" or Angelina "Zhang" --//
       encoding.appendBoth($J);
       return 2;
     }
 
-    if (_startsWith(value, _ZO_ZI_ZA_REGEXP, index + 1) ||
-        (slavoGermanic && (index > 0 && _codeUnitAt(value, index - 1) != $T))) {
+    if (PhoneticUtils.startsWith(value, _ZO_ZI_ZA_REGEXP, index + 1) ||
+        (slavoGermanic &&
+            (index > 0 && PhoneticUtils.codeUnitAt(value, index - 1) != $T))) {
       encoding.appendEachString('S', 'TS');
     } else {
       encoding.appendBoth($S);

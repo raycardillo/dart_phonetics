@@ -1,6 +1,6 @@
 /*
  * dart_phonetics is a collection of phonetics algorithms implemented in Dart.
- * Copyright (C) 2019 Raymond Cardillo (dba Cardillo's Creations)
+ * Copyright (c) 2019 Raymond Cardillo (dba Cardillo's Creations)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ class RefinedSoundex implements PhoneticEncoder {
   @override
   PhoneticEncoding encode(String input) {
     // clean up the input and convert to uppercase
-    input = PhoneticUtils.clean(input, latin: false);
+    input = PhoneticUtils.clean(input, allowLatin: false);
     if (input == null) {
       return null;
     }
