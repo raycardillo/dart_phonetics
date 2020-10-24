@@ -1256,9 +1256,9 @@ void main() {
   group('Special Prefixes', () {
     test('test A prefixes', () {
       final encoder = DoubleMetaphone.defaultEncoder;
-      expectEncoding(encoder, "ab Wennonwen", 'APNN', ['APNN']);
-      expectEncoding(encoder, "ap Llewellyn", 'APLL', ['APLL']);
-      expectEncoding(encoder, "ap Lorwerth", 'APLR', ['APLR']);
+      expectEncoding(encoder, 'ab Wennonwen', 'APNN', ['APNN']);
+      expectEncoding(encoder, 'ap Llewellyn', 'APLL', ['APLL']);
+      expectEncoding(encoder, 'ap Lorwerth', 'APLR', ['APLR']);
     });
 
     test('test D prefixes', () {

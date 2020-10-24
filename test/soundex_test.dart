@@ -557,15 +557,15 @@ void main() {
       // https://www.ics.uci.edu/~dan/genealogy/Miller/javascrp/soundex.htm
       expectEncoding(encoder, 'vanDever', 'V531', ['D160']);
 
-      expectEncoding(encoder, "Conway", 'C500', ['W000']);
+      expectEncoding(encoder, 'Conway', 'C500', ['W000']);
       expectEncoding(encoder, 'DeHunt', 'D530', ['H530']);
       expectEncoding(encoder, 'De Hunt', 'D530', ['H530']);
       expectEncoding(encoder, 'DelaHunt', 'D453', ['H530']);
       expectEncoding(encoder, 'Dela Hunt', 'D453', ['H530']);
       expectEncoding(encoder, 'De la Hunt', 'D453', ['H530']);
-      expectEncoding(encoder, "DiOrio", 'D600', ['O600']);
-      expectEncoding(encoder, "Dupont", 'D153', ['P530']);
-      expectEncoding(encoder, "DeCicco", 'D220', ['C200']);
+      expectEncoding(encoder, 'DiOrio', 'D600', ['O600']);
+      expectEncoding(encoder, 'Dupont', 'D153', ['P530']);
+      expectEncoding(encoder, 'DeCicco', 'D220', ['C200']);
       expectEncoding(encoder, "D'Asti", 'D230', ['A230']);
       expectEncoding(encoder, 'la Cruz', 'L262', ['C620']);
       expectEncoding(encoder, 'LaFontaine', 'L153', ['F535']);
