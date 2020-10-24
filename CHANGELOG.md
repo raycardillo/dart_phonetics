@@ -1,3 +1,7 @@
+## 0.2.1
+
+* _Minor pub updates and tested with dart `2.10`._
+
 ## 0.2.0
 
 * **NYSIIS** implemented (original and modified).

@@ -110,9 +110,9 @@ void main() {
       final encoder = Nysiis.originalEncoder;
       expectEncoding(encoder, "O'Daniel", 'ODANAL');
       expectEncoding(encoder, "O'Donnel", 'ODANAL');
-      expectEncoding(encoder, "Cory", 'CARY');
-      expectEncoding(encoder, "Corey", 'CARY');
-      expectEncoding(encoder, "Kory", 'CARY');
+      expectEncoding(encoder, 'Cory', 'CARY');
+      expectEncoding(encoder, 'Corey', 'CARY');
+      expectEncoding(encoder, 'Kory', 'CARY');
     });
 
     // http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
