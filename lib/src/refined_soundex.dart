@@ -37,7 +37,7 @@ class RefinedSoundex implements PhoneticEncoder {
   final Map<int, int> soundexMapping;
 
   /// Maximum length of the encoding (and how much to pad if [paddingEnabled]).
-  final int maxLength;
+  final int? maxLength;
 
   /// This is a default mapping of the 26 letters used in US English.
   static const Map<int, int> defaultMapping = {
@@ -81,7 +81,7 @@ class RefinedSoundex implements PhoneticEncoder {
   /// Creates a custom Soundex instance. This constructor can be used to
   /// provide custom mappings for non-Western character sets, etc.
   factory RefinedSoundex.fromMapping(final Map<int, int> soundexMapping,
-          {int maxLength}) =>
+          {int? maxLength}) =>
       RefinedSoundex._internal(Map.unmodifiable(soundexMapping), maxLength);
 
   /// Gets the [defaultEncoder] instance of a RefinedSoundex encoder.
@@ -92,7 +92,7 @@ class RefinedSoundex implements PhoneticEncoder {
   /// Returns a [PhoneticEncoding] for the [input] String.
   /// Returns `null` if the input is `null` or empty (after cleaning up).
   @override
-  PhoneticEncoding encode(String input) {
+  PhoneticEncoding? encode(String? input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input, allowLatin: false);
     if (input == null) {
@@ -105,7 +105,7 @@ class RefinedSoundex implements PhoneticEncoder {
     // always write first character
     soundex.writeCharCode(input.codeUnitAt(0));
 
-    int last, current;
+    int? last, current;
     last = $asterisk;
 
     // encode all characters
@@ -117,7 +117,7 @@ class RefinedSoundex implements PhoneticEncoder {
         soundex.writeCharCode(current);
       }
 
-      if (maxLength != null && soundex.length >= maxLength) {
+      if (maxLength != null && soundex.length >= maxLength!) {
         break;
       }
 

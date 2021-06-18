@@ -30,21 +30,21 @@ class _DoubleMetaphoneEncoding {
   final StringBuffer _alternate = StringBuffer();
 
   /// Max length to encode (or `null` if no max length).
-  final int _maxLength;
+  final int? _maxLength;
 
   /// Internal constructor.
   _DoubleMetaphoneEncoding([this._maxLength]);
 
   /// Append a [charCode] to the primary encoding.
   void appendPrimary(final int charCode) {
-    if (_maxLength == null || _primary.length < _maxLength) {
+    if (_maxLength == null || _primary.length < _maxLength!) {
       _primary.writeCharCode(charCode);
     }
   }
 
   /// Append a [charCode] to the alternate encoding.
   void appendAlternate(final int charCode) {
-    if (_maxLength == null || _alternate.length < _maxLength) {
+    if (_maxLength == null || _alternate.length < _maxLength!) {
       _alternate.writeCharCode(charCode);
     }
   }
@@ -64,7 +64,7 @@ class _DoubleMetaphoneEncoding {
 
   /// Append a [value] to the primary encoding.
   void appendPrimaryString(final String value) {
-    final charsRemaining = _maxLength - _primary.length;
+    final charsRemaining = _maxLength! - _primary.length;
     if (value.length <= charsRemaining) {
       _primary.write(value);
     } else {
@@ -74,7 +74,7 @@ class _DoubleMetaphoneEncoding {
 
   /// Append a [value] to the alternate encoding.
   void appendAlternateString(final String value) {
-    final charsRemaining = _maxLength - _alternate.length;
+    final charsRemaining = _maxLength! - _alternate.length;
     if (value.length <= charsRemaining) {
       _alternate.write(value);
     } else {
@@ -100,8 +100,8 @@ class _DoubleMetaphoneEncoding {
   /// max length), `false` otherwise (or if [_maxLength] is `null`).
   bool isMaxedOut() {
     return _maxLength != null &&
-        _primary.length >= _maxLength &&
-        _alternate.length >= _maxLength;
+        _primary.length >= _maxLength! &&
+        _alternate.length >= _maxLength!;
   }
 
   /// Returns the string value of the primary encoding. This renders the
@@ -143,7 +143,7 @@ class DoubleMetaphone implements PhoneticEncoder {
   static const int defaultMaxLength = 4;
 
   /// Maximum length of the encoding, where `null` indicates no maximum.
-  final int maxLength;
+  final int? maxLength;
 
   // Set.contains() for single character matches are fast and convenient
   static const Set<int> _L_R_N_M_B_H_F_V_W_SPACE = {
@@ -224,7 +224,7 @@ class DoubleMetaphone implements PhoneticEncoder {
   DoubleMetaphone._internal(this.maxLength);
 
   /// Creates an instance with a custom [maxLength].
-  factory DoubleMetaphone.withMaxLength(int maxLength) =>
+  factory DoubleMetaphone.withMaxLength(int? maxLength) =>
       DoubleMetaphone._internal(maxLength);
 
   /// Gets the [defaultEncoder] instance of the encoder by default.
@@ -249,7 +249,7 @@ class DoubleMetaphone implements PhoneticEncoder {
   /// Per specification, the encoding always contains two values. If there is
   /// no alternate, the primary and the alternate encodings will be the same.
   @override
-  PhoneticEncoding encode(String input) {
+  PhoneticEncoding? encode(String? input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input);
     if (input == null) {

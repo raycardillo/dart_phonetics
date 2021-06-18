@@ -86,7 +86,7 @@ class Soundex implements PhoneticEncoder {
   final int paddingChar;
 
   /// Maximum length of the encoding (and how much to pad if [paddingEnabled]).
-  final int maxLength;
+  final int? maxLength;
 
   /// This is a default mapping of the 26 letters used in US English.
   static const Map<int, int> americanMapping = {
@@ -151,7 +151,7 @@ class Soundex implements PhoneticEncoder {
           bool hyphenatedPartsEnabled = true,
           bool ignoreHW = true,
           bool trackIgnored = true,
-          int maxLength = defaultMaxLength,
+          int? maxLength = defaultMaxLength,
           int paddingChar = $0,
           bool paddingEnabled = true}) =>
       Soundex._internal(
@@ -188,7 +188,7 @@ class Soundex implements PhoneticEncoder {
 
   /// Returns a single encoding for the [input] String.
   /// Returns `null` if the input is `null` or empty (after cleaning up).
-  String _encode(String input) {
+  String? _encode(String? input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input, allowLatin: false);
     if (input == null) {
@@ -228,14 +228,14 @@ class Soundex implements PhoneticEncoder {
         }
       }
 
-      if (maxLength != null && soundex.length >= maxLength) {
+      if (maxLength != null && soundex.length >= maxLength!) {
         break;
       }
     }
 
     // pad the encoding if required
     if (paddingEnabled && maxLength != null) {
-      while (soundex.length < maxLength) {
+      while (soundex.length < maxLength!) {
         soundex.writeCharCode(paddingChar);
       }
     }
@@ -245,7 +245,7 @@ class Soundex implements PhoneticEncoder {
 
   /// Adds an encoding to [alternates] if there was a known prefix present.
   void _addTrimmedPrefixToAlternates(
-      final Set<String> alternates, final String input) {
+      final Set<String?> alternates, final String input) {
     final trimmed = _trimPrefixes(input);
     if (trimmed.length < input.length) {
       alternates.add(_encode(trimmed));
@@ -255,7 +255,7 @@ class Soundex implements PhoneticEncoder {
   /// Returns a [PhoneticEncoding] for the [input] String.
   /// Returns `null` if the input is `null` or empty (after cleaning up).
   @override
-  PhoneticEncoding encode(String input) {
+  PhoneticEncoding? encode(String? input) {
     if (input == null || input.isEmpty) {
       return null;
     }
@@ -276,7 +276,7 @@ class Soundex implements PhoneticEncoder {
     final firstPart = iterator.current;
     final primary = _encode(firstPart);
 
-    final alternates = <String>{};
+    final alternates = <String?>{};
 
     if (prefixesEnabled) {
       _addTrimmedPrefixToAlternates(alternates, firstPart);
@@ -285,11 +285,9 @@ class Soundex implements PhoneticEncoder {
     // now go through all parts and add more alternates
     while (iterator.moveNext()) {
       final part = iterator.current;
-      if (part != null) {
-        alternates.add(_encode(part));
-        if (prefixesEnabled) {
-          _addTrimmedPrefixToAlternates(alternates, part);
-        }
+      alternates.add(_encode(part));
+      if (prefixesEnabled) {
+        _addTrimmedPrefixToAlternates(alternates, part);
       }
     }
 

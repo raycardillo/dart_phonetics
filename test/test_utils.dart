@@ -27,9 +27,9 @@ void expectEncodingEquals(
 
   final foundMatch = ((encoding1?.primary == encoding2?.primary) ||
       (encoding1?.alternates != null &&
-          encoding1.alternates.contains(encoding2?.primary)) ||
+          encoding1!.alternates!.contains(encoding2?.primary)) ||
       (encoding2?.alternates != null &&
-          encoding2.alternates.contains(encoding1?.primary)));
+          encoding2!.alternates!.contains(encoding1?.primary)));
 
   expect(true, foundMatch,
       reason: 'Match not found between '
@@ -38,8 +38,8 @@ void expectEncodingEquals(
 
 /// Verify an encoding matches [expected] for a single [input].
 void expectEncoding(
-    PhoneticEncoder encoder, String input, String expectedPrimary,
-    [List<String> expectedAlternates]) {
+    PhoneticEncoder encoder, String input, String? expectedPrimary,
+    [List<String>? expectedAlternates]) {
   final encoding = encoder.encode(input);
   expect(encoding?.primary, expectedPrimary,
       reason: 'Primary failed for input=$input');
@@ -52,7 +52,7 @@ void expectEncoding(
 /// Verify an encoding matches [expected] for a list of [inputs].
 void expectEncodings(
     PhoneticEncoder encoder, List<String> inputs, String expectedPrimary,
-    [List<String> expectedAlternates]) {
+    [List<String>? expectedAlternates]) {
   inputs.forEach((input) {
     expectEncoding(encoder, input, expectedPrimary, expectedAlternates);
   });

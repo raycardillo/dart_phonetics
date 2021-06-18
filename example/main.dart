@@ -3,7 +3,7 @@ import 'package:dart_phonetics/dart_phonetics.dart';
 void _printResult(PhoneticEncoder encoder, String input) {
   final encoding = encoder.encode(input);
   print(
-      '${encoder?.runtimeType?.toString()} - "$input"\n  primary = ${encoding?.primary}\n  alternate = ${encoding?.alternates}\n');
+      '${encoder.runtimeType.toString()} - "$input"\n  primary = ${encoding?.primary}\n  alternate = ${encoding?.alternates}\n');
 }
 
 void main() {

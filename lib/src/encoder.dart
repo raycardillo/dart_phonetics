@@ -27,7 +27,7 @@ class PhoneticEncoderException implements Exception {
   final String message;
 
   /// Optionally indicates another exception that was the root cause.
-  final Exception cause;
+  final Exception? cause;
 
   /// Creates a new PhoneticEncoderException with an optional root [cause].
   PhoneticEncoderException(this.input, this.message, [this.cause]);
@@ -46,10 +46,10 @@ class PhoneticEncoderException implements Exception {
 /// of _optional_ [alternates].
 class PhoneticEncoding {
   /// The primary phonetic encoding.
-  final String primary;
+  final String? primary;
 
   /// An alternative phonetic encoding for algorithms that support this.
-  final Set<String> alternates;
+  final Set<String?>? alternates;
 
   /// Creates an instance of this data class.
   PhoneticEncoding(this.primary, [this.alternates]);
@@ -64,5 +64,5 @@ class PhoneticEncoding {
 /// The common interface for all phonetic encoders.
 abstract class PhoneticEncoder {
   /// Returns a [PhoneticEncoding] for the [input] String.
-  PhoneticEncoding encode(String input);
+  PhoneticEncoding? encode(String? input);
 }

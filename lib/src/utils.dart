@@ -124,7 +124,7 @@ class PhoneticUtils {
   /// performance negatively for an edge case that is not common. You may
   /// need to do additional cleaning if you're working with strings
   /// that are particularly dirty.
-  static String clean(final String value, {bool allowLatin = true}) {
+  static String? clean(final String? value, {bool allowLatin = true}) {
     if (value == null || value.isEmpty) {
       return null;
     }
@@ -174,7 +174,7 @@ class PhoneticUtils {
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
   static int primaryDifference(
-      final PhoneticEncoder encoder, final String s1, final String s2) {
+      final PhoneticEncoder encoder, final String? s1, final String? s2) {
     final encoding1 = encoder.encode(s1);
     final encoding2 = encoder.encode(s2);
 
@@ -186,7 +186,7 @@ class PhoneticUtils {
   ///
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
-  static int differenceEncoded(final String e1, final String e2) {
+  static int differenceEncoded(final String? e1, final String? e2) {
     if (e1 == null || e1.isEmpty || e2 == null || e2.isEmpty) {
       return 0;
     }
