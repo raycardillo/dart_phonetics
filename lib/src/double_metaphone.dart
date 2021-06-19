@@ -99,8 +99,9 @@ class _DoubleMetaphoneEncoding {
   /// Returns `true` if the encoding is maxed out (both encodings are at the
   /// max length), `false` otherwise (or if [_maxLength] is `0`).
   bool isMaxedOut() {
-    return _maxLength > 0 && _primary.length >= _maxLength && _alternate
-        .length >= _maxLength;
+    return _maxLength > 0 &&
+        _primary.length >= _maxLength &&
+        _alternate.length >= _maxLength;
   }
 
   /// Returns the string value of the primary encoding. This renders the

@@ -1,3 +1,7 @@
+## 1.0.1
+
+* _Fix dart formatting._
+
 ## 1.0.0
 
 * _Tested with dart `2.13`._
