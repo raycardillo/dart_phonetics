@@ -49,7 +49,7 @@ void main() {
       expectEncoding(encoder8, 'PFEISTER', 'FASTAR');
       expectEncoding(encoder8, 'SCHOENHOEFT', 'SANAFT');
 
-      final encoderNoMax = Nysiis.withOptions(maxLength: null);
+      final encoderNoMax = Nysiis.withOptions(maxLength: 0);
       expectEncoding(encoderNoMax, 'PHILLIPSON', 'FALAPSAN');
       expectEncoding(encoderNoMax, 'PFEISTER', 'FASTAR');
       expectEncoding(encoderNoMax, 'SCHOENHOEFT', 'SANAFT');
@@ -60,7 +60,7 @@ void main() {
     // https://scholar.google.com/scholar?cluster=634245576371390488&hl=en&as_sdt=0,21&as_vis=1
     test('test performance paper examples', () {
       final encoder = Nysiis.originalEncoder;
-      final encoderNoMax = Nysiis.withOptions(maxLength: null);
+      final encoderNoMax = Nysiis.withOptions(maxLength: 0);
 
       expectEncoding(encoder, 'Phonetic', 'FANATA');
       expectEncoding(encoderNoMax, 'Phonetic', 'FANATAC');
@@ -75,7 +75,7 @@ void main() {
     // version the "modified" implementation is not the same as the USDA
     // version of the modified algorithm that is implemented here.
     test('test original dropby.com examples', () {
-      final encoder = Nysiis.withOptions(maxLength: null);
+      final encoder = Nysiis.withOptions(maxLength: 0);
       expectEncoding(encoder, 'MACINTOSH', 'MCANT');
       expectEncoding(encoder, 'KNUTH', 'NAT');
       expectEncoding(encoder, 'KOEHN', 'CAN');
@@ -117,7 +117,7 @@ void main() {
 
     // http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
     test('test ntz examples', () {
-      final encoder = Nysiis.withOptions(maxLength: null);
+      final encoder = Nysiis.withOptions(maxLength: 0);
       expectEncoding(encoder, 'Diggell', 'DAGAL');
       expectEncoding(encoder, 'Dougal', 'DAGAL');
       expectEncoding(encoder, 'Doughill', 'DAGAL');
@@ -281,7 +281,7 @@ void main() {
       expectEncoding(encoder8, 'SCHOENHOEFT', 'SANAFT');
 
       final encoderNoMax =
-          Nysiis.withOptions(maxLength: null, enableModified: true);
+          Nysiis.withOptions(maxLength: 0, enableModified: true);
       expectEncoding(encoderNoMax, 'PHILLIPSON', 'FALAPSAN');
       expectEncoding(encoderNoMax, 'PFEISTER', 'FASTAR');
       expectEncoding(encoderNoMax, 'SCHOENHOEFT', 'SANAFT');
@@ -293,7 +293,7 @@ void main() {
     // version the "modified" implementation is not the same as the USDA
     // version of the modified algorithm that is implemented here.
     test('test modified dropby.com examples', () {
-      final encoder = Nysiis.withOptions(maxLength: null, enableModified: true);
+      final encoder = Nysiis.withOptions(maxLength: 0, enableModified: true);
       expectEncoding(encoder, 'MACINTOSH', 'MCANTAS');
       expectEncoding(encoder, 'KNUTH', 'NAT');
       expectEncoding(encoder, 'KOEHN', 'CAN');

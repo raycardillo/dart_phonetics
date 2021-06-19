@@ -30,9 +30,8 @@ void main() {
   final watch = Stopwatch();
 
   const numIterations = 2000000;
-  var vowelsFound;
+  var vowelsFound = 0;
 
-  vowelsFound = 0;
   print('running if statement matching...');
   watch.start();
   for (var i = 0; i < numIterations; i++) {

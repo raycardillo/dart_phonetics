@@ -56,7 +56,7 @@ void main() {
     // https://scholar.google.com/scholar?cluster=634245576371390488&hl=en&as_sdt=0,21&as_vis=1
     test('test performance paper examples', () {
       final encoder = DoubleMetaphone.defaultEncoder;
-      final encoderNoMax = DoubleMetaphone.withMaxLength(null);
+      final encoderNoMax = DoubleMetaphone.withMaxLength(0);
 
       //expectEncoding(encoder, 'Phonetic', 'FNTK');
       expectEncoding(encoderNoMax, 'Phonetic', 'FNTK');

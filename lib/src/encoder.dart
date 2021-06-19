@@ -20,14 +20,14 @@
 /// phonetically encoding an input string.
 class PhoneticEncoderException implements Exception {
   /// The input that was being processed when the exception occurred.
-  /// This should only be `null` if the input being encoded was `null`.
+  /// This may be empty if the input being encoded was empty after cleanup.
   final String input;
 
   /// A message describing the problem that was encountered.
   final String message;
 
   /// Optionally indicates another exception that was the root cause.
-  final Exception cause;
+  final Exception? cause;
 
   /// Creates a new PhoneticEncoderException with an optional root [cause].
   PhoneticEncoderException(this.input, this.message, [this.cause]);
@@ -49,7 +49,7 @@ class PhoneticEncoding {
   final String primary;
 
   /// An alternative phonetic encoding for algorithms that support this.
-  final Set<String> alternates;
+  final Set<String>? alternates;
 
   /// Creates an instance of this data class.
   PhoneticEncoding(this.primary, [this.alternates]);
@@ -63,6 +63,6 @@ class PhoneticEncoding {
 
 /// The common interface for all phonetic encoders.
 abstract class PhoneticEncoder {
-  /// Returns a [PhoneticEncoding] for the [input] String.
-  PhoneticEncoding encode(String input);
+  /// Returns a [PhoneticEncoding] for the [input] String or `null`.
+  PhoneticEncoding? encode(String input);
 }

@@ -23,13 +23,15 @@ import 'package:test/test.dart';
 void expectEncodingEquals(
     PhoneticEncoder encoder, String input1, String input2) {
   final encoding1 = encoder.encode(input1);
+  final encoding1Alternates = encoding1?.alternates;
   final encoding2 = encoder.encode(input2);
+  final encoding2Alternates = encoding2?.alternates;
 
   final foundMatch = ((encoding1?.primary == encoding2?.primary) ||
-      (encoding1?.alternates != null &&
-          encoding1.alternates.contains(encoding2?.primary)) ||
-      (encoding2?.alternates != null &&
-          encoding2.alternates.contains(encoding1?.primary)));
+      (encoding1Alternates != null &&
+          encoding1Alternates.contains(encoding2?.primary)) ||
+      (encoding2Alternates != null &&
+          encoding2Alternates.contains(encoding1?.primary)));
 
   expect(true, foundMatch,
       reason: 'Match not found between '
@@ -38,8 +40,8 @@ void expectEncodingEquals(
 
 /// Verify an encoding matches [expected] for a single [input].
 void expectEncoding(
-    PhoneticEncoder encoder, String input, String expectedPrimary,
-    [List<String> expectedAlternates]) {
+    PhoneticEncoder encoder, String input, String? expectedPrimary,
+    [List<String>? expectedAlternates]) {
   final encoding = encoder.encode(input);
   expect(encoding?.primary, expectedPrimary,
       reason: 'Primary failed for input=$input');
@@ -51,9 +53,9 @@ void expectEncoding(
 
 /// Verify an encoding matches [expected] for a list of [inputs].
 void expectEncodings(
-    PhoneticEncoder encoder, List<String> inputs, String expectedPrimary,
-    [List<String> expectedAlternates]) {
-  inputs.forEach((input) {
+    PhoneticEncoder encoder, List<String> inputs, String? expectedPrimary,
+    [List<String>? expectedAlternates]) {
+  for (var input in inputs) {
     expectEncoding(encoder, input, expectedPrimary, expectedAlternates);
-  });
+  }
 }

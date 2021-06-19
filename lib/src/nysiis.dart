@@ -56,7 +56,7 @@ class Nysiis implements PhoneticEncoder {
   /// Default encoding length to use for the modified algorithm.
   static const int defaultModifiedMaxLength = 8;
 
-  /// Maximum length of the encoding, where `null` indicates no maximum.
+  /// Maximum length of the encoding, where `0` indicates no maximum.
   final int maxLength;
 
   /// Indicates if the "modified" rules should be applied when encoding.
@@ -276,9 +276,7 @@ class Nysiis implements PhoneticEncoder {
     // NOTE: per specification, this loop starts at the second character.
     for (var i = 1; i < chars.length; i++) {
       final char = chars[i];
-      if (char == null) {
-        break;
-      } else if (PhoneticUtils.isSpecialCharacter(char)) {
+      if (PhoneticUtils.isSpecialCharacter(char)) {
         continue;
       }
 
@@ -401,11 +399,14 @@ class Nysiis implements PhoneticEncoder {
 
   /// Encodes a string using the NYSIIS algorithm as configured. This encoder
   /// does not produce any [PhoneticEncoding.alternates] values.
+  ///
+  /// Returns a [PhoneticEncoding] for the [input] String or
+  /// `null` if the [input] is empty (after cleaning up).
   @override
-  PhoneticEncoding encode(String input) {
+  PhoneticEncoding? encode(String input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input);
-    if (input == null) {
+    if (input.isEmpty) {
       return null;
     }
 
@@ -430,7 +431,7 @@ class Nysiis implements PhoneticEncoder {
 
     // truncate the encoding to maxLength if required
     var finalEncoding = String.fromCharCodes(encoding);
-    if (maxLength != null && finalEncoding.length > maxLength) {
+    if (maxLength > 0 && finalEncoding.length > maxLength) {
       finalEncoding = finalEncoding.substring(0, maxLength);
     }
 

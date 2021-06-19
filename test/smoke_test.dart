@@ -25,8 +25,7 @@ import 'test_utils.dart';
 void main() {
   group('Utility Smoke Tests', () {
     test('null behavior', () {
-      expect(PhoneticUtils.clean(null), null);
-      expect(PhoneticUtils.clean(''), null);
+      expect(PhoneticUtils.clean(''), '');
       expect(PhoneticUtils.differenceEncoded(null, ''), 0);
       expect(PhoneticUtils.differenceEncoded('', null), 0);
     });

@@ -88,7 +88,7 @@ void main() {
       // test some strings with irregular characters
       expectEncoding(encoder, '#@', null);
       expectEncoding(encoder, '<test&ing>', 'T6036084');
-      expectEncoding(encoder, '\0#tes@ting!', 'T6036084');
+      expectEncoding(encoder, '${$nul}#tes@ting!', 'T6036084');
       expectEncoding(encoder, ' \t\n\r Washington \t\n\r ', 'W03084608');
     });
 
@@ -130,9 +130,7 @@ void main() {
       // testing examples from:
       // http://ntz-develop.blogspot.com/2011/03/phonetic-algorithms.html
 
-      var inputs;
-
-      inputs = [
+      var inputs = [
         'Braz',
         'Broz',
       ];
@@ -196,7 +194,6 @@ void main() {
       final encoder = RefinedSoundex();
 
       // Edge cases
-      expect(0, PhoneticUtils.primaryDifference(encoder, null, null));
       expect(0, PhoneticUtils.primaryDifference(encoder, '', ''));
       expect(0, PhoneticUtils.primaryDifference(encoder, ' ', ' '));
 

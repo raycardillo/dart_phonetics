@@ -125,8 +125,8 @@ class PhoneticUtils {
   /// need to do additional cleaning if you're working with strings
   /// that are particularly dirty.
   static String clean(final String value, {bool allowLatin = true}) {
-    if (value == null || value.isEmpty) {
-      return null;
+    if (value.isEmpty) {
+      return value;
     }
 
     final cleaned = value
@@ -136,7 +136,7 @@ class PhoneticUtils {
         .replaceAll(
             (allowLatin) ? _cleanLatinAllowed : _cleanLatinNotAllowed, '');
 
-    return cleaned.isEmpty ? null : cleaned;
+    return cleaned;
   }
 
   /// Returns the character from [value] at [index] or [$nul] if the index is
@@ -186,7 +186,7 @@ class PhoneticUtils {
   ///
   /// Despite the name, this is actually a measure of similarity.
   /// This naming is consistent with the SQL `DIFFERENCE` function definition.
-  static int differenceEncoded(final String e1, final String e2) {
+  static int differenceEncoded(final String? e1, final String? e2) {
     if (e1 == null || e1.isEmpty || e2 == null || e2.isEmpty) {
       return 0;
     }
