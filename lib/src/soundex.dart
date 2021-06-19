@@ -85,7 +85,8 @@ class Soundex implements PhoneticEncoder {
   /// The character to use for padding (when [paddingEnabled] is `true`).
   final int paddingChar;
 
-  /// Maximum length of the encoding (and how much to pad if [paddingEnabled]).
+  /// Maximum length of the encoding, where `0` indicates no maximum,
+  /// and how much to pad if [paddingEnabled].
   final int maxLength;
 
   /// This is a default mapping of the 26 letters used in US English.
@@ -186,13 +187,13 @@ class Soundex implements PhoneticEncoder {
     return input.split(RegExp(r'\s*-\s*'));
   }
 
-  /// Returns a single encoding for the [input] String.
-  /// Returns `null` if the input is `null` or empty (after cleaning up).
+  /// Returns a [PhoneticEncoding] for the [input] String or
+  /// an empty string if the [input] is empty (after cleaning up).
   String _encode(String input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input, allowLatin: false);
-    if (input == null) {
-      return null;
+    if (input.isEmpty) {
+      return input;
     }
 
     // we'll write to a buffer to avoid string copies
@@ -228,13 +229,13 @@ class Soundex implements PhoneticEncoder {
         }
       }
 
-      if (maxLength != null && soundex.length >= maxLength) {
+      if (maxLength > 0 && soundex.length >= maxLength) {
         break;
       }
     }
 
     // pad the encoding if required
-    if (paddingEnabled && maxLength != null) {
+    if (paddingEnabled && maxLength > 0) {
       while (soundex.length < maxLength) {
         soundex.writeCharCode(paddingChar);
       }
@@ -252,11 +253,15 @@ class Soundex implements PhoneticEncoder {
     }
   }
 
-  /// Returns a [PhoneticEncoding] for the [input] String.
-  /// Returns `null` if the input is `null` or empty (after cleaning up).
+  /// Encodes a string using the Soundex algorithm as configured.
+  ///
+  /// Returns a [PhoneticEncoding] for the [input] String or
+  /// `null` if the [input] is empty (after cleaning up).
   @override
-  PhoneticEncoding encode(String input) {
-    if (input == null || input.isEmpty) {
+  PhoneticEncoding? encode(String input) {
+    // clean up the input and convert to uppercase
+    input = PhoneticUtils.clean(input, allowLatin: false);
+    if (input.isEmpty) {
       return null;
     }
 
@@ -285,17 +290,15 @@ class Soundex implements PhoneticEncoder {
     // now go through all parts and add more alternates
     while (iterator.moveNext()) {
       final part = iterator.current;
-      if (part != null) {
-        alternates.add(_encode(part));
-        if (prefixesEnabled) {
-          _addTrimmedPrefixToAlternates(alternates, part);
-        }
+      alternates.add(_encode(part));
+      if (prefixesEnabled) {
+        _addTrimmedPrefixToAlternates(alternates, part);
       }
     }
 
     // remove the primary if it made it into the alternate list from others
     alternates.remove(primary);
 
-    return PhoneticEncoding(primary, alternates.isEmpty ? null : alternates);
+    return PhoneticEncoding(primary, alternates);
   }
 }

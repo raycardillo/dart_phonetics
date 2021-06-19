@@ -36,7 +36,7 @@ class RefinedSoundex implements PhoneticEncoder {
   /// ignore the input character and do not encode it (e.g., vowels).
   final Map<int, int> soundexMapping;
 
-  /// Maximum length of the encoding (and how much to pad if [paddingEnabled]).
+  /// Maximum length of the encoding, where `0` indicates no maximum.
   final int maxLength;
 
   /// This is a default mapping of the 26 letters used in US English.
@@ -81,7 +81,7 @@ class RefinedSoundex implements PhoneticEncoder {
   /// Creates a custom Soundex instance. This constructor can be used to
   /// provide custom mappings for non-Western character sets, etc.
   factory RefinedSoundex.fromMapping(final Map<int, int> soundexMapping,
-          {int maxLength}) =>
+          {int maxLength = 0}) =>
       RefinedSoundex._internal(Map.unmodifiable(soundexMapping), maxLength);
 
   /// Gets the [defaultEncoder] instance of a RefinedSoundex encoder.
@@ -89,13 +89,15 @@ class RefinedSoundex implements PhoneticEncoder {
 
   //#endregion
 
-  /// Returns a [PhoneticEncoding] for the [input] String.
-  /// Returns `null` if the input is `null` or empty (after cleaning up).
+  /// Encodes a string using the Refined Soundex algorithm as configured.
+  ///
+  /// Returns a [PhoneticEncoding] for the [input] String or
+  /// `null` if the [input] is empty (after cleaning up).
   @override
-  PhoneticEncoding encode(String input) {
+  PhoneticEncoding? encode(String input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input, allowLatin: false);
-    if (input == null) {
+    if (input.isEmpty) {
       return null;
     }
 
@@ -105,7 +107,7 @@ class RefinedSoundex implements PhoneticEncoder {
     // always write first character
     soundex.writeCharCode(input.codeUnitAt(0));
 
-    int last, current;
+    int? last, current;
     last = $asterisk;
 
     // encode all characters
@@ -117,7 +119,7 @@ class RefinedSoundex implements PhoneticEncoder {
         soundex.writeCharCode(current);
       }
 
-      if (maxLength != null && soundex.length >= maxLength) {
+      if (maxLength > 0 && soundex.length >= maxLength) {
         break;
       }
 

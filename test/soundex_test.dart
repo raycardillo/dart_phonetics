@@ -90,7 +90,7 @@ void main() {
       expectEncoding(encoder10, 'supercalifragilistic', 'S162416242');
 
       final encoderNoMax =
-          Soundex.fromMapping(Soundex.americanMapping, maxLength: null);
+          Soundex.fromMapping(Soundex.americanMapping, maxLength: 0);
       expectEncoding(encoderNoMax, 'testing', 'T2352');
       expectEncoding(encoderNoMax, 'supercalifragilistic', 'S16241624232');
     });
@@ -100,7 +100,7 @@ void main() {
 
       expectEncoding(encoder, '#@', null);
       expectEncoding(encoder, '<test&ing>', 'T235');
-      expectEncoding(encoder, '\0#tes@ting!', 'T235');
+      expectEncoding(encoder, '${$nul}#tes@ting!', 'T235');
       expectEncoding(encoder, ' \t\n\r Washington \t\n\r ', 'W252');
     });
 
@@ -110,7 +110,7 @@ void main() {
     test('test performance paper examples', () {
       final encoder = Soundex();
       final encoderNoMax =
-          Soundex.fromMapping(Soundex.americanMapping, maxLength: null);
+          Soundex.fromMapping(Soundex.americanMapping, maxLength: 0);
 
       expectEncoding(encoder, 'Phonetic', 'P532');
       expectEncoding(encoderNoMax, 'Phonetic', 'P532');
@@ -387,9 +387,7 @@ void main() {
 
       expectEncoding(encoder, 'Fusedale', 'F234');
 
-      var inputs;
-
-      inputs = [
+      var inputs = [
         'Genthner',
         'Gentner',
         'Gianettini',
@@ -617,7 +615,6 @@ void main() {
       final encoder = Soundex();
 
       // Edge cases
-      expect(0, PhoneticUtils.primaryDifference(encoder, null, null));
       expect(0, PhoneticUtils.primaryDifference(encoder, '', ''));
       expect(0, PhoneticUtils.primaryDifference(encoder, ' ', ' '));
 

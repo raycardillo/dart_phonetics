@@ -29,22 +29,22 @@ class _DoubleMetaphoneEncoding {
   /// Buffer used for writing alternate encoding.
   final StringBuffer _alternate = StringBuffer();
 
-  /// Max length to encode (or `null` if no max length).
+  /// Max length to encode (defaults to `0` for no max length).
   final int _maxLength;
 
   /// Internal constructor.
-  _DoubleMetaphoneEncoding([this._maxLength]);
+  _DoubleMetaphoneEncoding([this._maxLength = 0]);
 
   /// Append a [charCode] to the primary encoding.
   void appendPrimary(final int charCode) {
-    if (_maxLength == null || _primary.length < _maxLength) {
+    if (_maxLength <= 0 || _primary.length < _maxLength) {
       _primary.writeCharCode(charCode);
     }
   }
 
   /// Append a [charCode] to the alternate encoding.
   void appendAlternate(final int charCode) {
-    if (_maxLength == null || _alternate.length < _maxLength) {
+    if (_maxLength <= 0 || _alternate.length < _maxLength) {
       _alternate.writeCharCode(charCode);
     }
   }
@@ -97,11 +97,10 @@ class _DoubleMetaphoneEncoding {
   }
 
   /// Returns `true` if the encoding is maxed out (both encodings are at the
-  /// max length), `false` otherwise (or if [_maxLength] is `null`).
+  /// max length), `false` otherwise (or if [_maxLength] is `0`).
   bool isMaxedOut() {
-    return _maxLength != null &&
-        _primary.length >= _maxLength &&
-        _alternate.length >= _maxLength;
+    return _maxLength > 0 && _primary.length >= _maxLength && _alternate
+        .length >= _maxLength;
   }
 
   /// Returns the string value of the primary encoding. This renders the
@@ -142,7 +141,7 @@ class DoubleMetaphone implements PhoneticEncoder {
   /// Default metaphone encoding length to use.
   static const int defaultMaxLength = 4;
 
-  /// Maximum length of the encoding, where `null` indicates no maximum.
+  /// Maximum length of the encoding, where `0` indicates no maximum.
   final int maxLength;
 
   // Set.contains() for single character matches are fast and convenient
@@ -246,13 +245,18 @@ class DoubleMetaphone implements PhoneticEncoder {
 
   //#endregion
 
+  /// Encodes a string using the Double Metaphone algorithm as configured.
+  ///
   /// Per specification, the encoding always contains two values. If there is
   /// no alternate, the primary and the alternate encodings will be the same.
+  ///
+  /// Returns a [PhoneticEncoding] for the [input] String or
+  /// `null` if the [input] is empty (after cleaning up).
   @override
-  PhoneticEncoding encode(String input) {
+  PhoneticEncoding? encode(String input) {
     // clean up the input and convert to uppercase
     input = PhoneticUtils.clean(input);
-    if (input == null) {
+    if (input.isEmpty) {
       return null;
     }
 
@@ -368,7 +372,7 @@ class DoubleMetaphone implements PhoneticEncoder {
 
     final primary = encoding.primary;
     final alternate = encoding.alternate;
-    return PhoneticEncoding(primary, (alternate.isEmpty ? null : {alternate}));
+    return PhoneticEncoding(primary, {alternate});
   }
 
   //#region Special Encoding Rules

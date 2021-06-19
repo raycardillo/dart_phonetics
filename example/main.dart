@@ -3,7 +3,7 @@ import 'package:dart_phonetics/dart_phonetics.dart';
 void _printResult(PhoneticEncoder encoder, String input) {
   final encoding = encoder.encode(input);
   print(
-      '${encoder?.runtimeType?.toString()} - "$input"\n  primary = ${encoding?.primary}\n  alternate = ${encoding?.alternates}\n');
+      '${encoder.runtimeType.toString()} - "$input"\n  primary = ${encoding?.primary}\n  alternate = ${encoding?.alternates}\n');
 }
 
 void main() {
@@ -13,7 +13,7 @@ void main() {
   _printResult(soundex, inputString);
 
   final customSoundex = Soundex.fromMapping(Soundex.americanMapping,
-      maxLength: null, paddingEnabled: false, ignoreHW: false);
+      maxLength: 0, paddingEnabled: false, ignoreHW: false);
   _printResult(customSoundex, inputString);
 
   final refinedSoundex = RefinedSoundex.defaultEncoder;
@@ -22,8 +22,7 @@ void main() {
   final nysiisOriginal = Nysiis.originalEncoder;
   _printResult(nysiisOriginal, inputString);
 
-  final nysiisModified =
-      Nysiis.withOptions(maxLength: null, enableModified: true);
+  final nysiisModified = Nysiis.withOptions(maxLength: 0, enableModified: true);
   _printResult(nysiisModified, inputString);
 
   final doubleMetaphone = DoubleMetaphone.withMaxLength(12);
