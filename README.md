@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.com/raycardillo/dart_phonetics.svg?branch=master)](https://travis-ci.com/raycardillo/dart_phonetics)
 [![Pub package](https://img.shields.io/pub/v/dart_phonetics)](https://pub.dev/packages/dart_phonetics)
 [![Dartdoc reference](https://img.shields.io/badge/dartdoc-reference-blue)](https://pub.dev/documentation/dart_phonetics/latest/)
-[![style: lint](https://img.shields.io/badge/style-lint-4BC0F5.svg)](https://pub.dev/packages/lint)
+[![style: lints](https://img.shields.io/badge/style-lints-4BC0F5.svg)](https://pub.dev/packages/lints)
 [![Project license](https://img.shields.io/badge/license-Apache%202.0-informational)](https://www.apache.org/licenses/LICENSE-2.0)
 
 A collection of phonetic algorithms for [Dart](https://dart.dev/) and [Flutter](https://flutter.dev/). These algorithms help find words or names that sound similar by generating an encoding that can be compared or indexed for fuzzy searching.
